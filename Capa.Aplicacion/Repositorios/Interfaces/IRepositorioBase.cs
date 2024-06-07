@@ -8,7 +8,7 @@ namespace Capa.Infraestructura.Repositorio.Interfaces
         Task<T> GetOne(int id);
         Task Add(T entity);
         Task Delete(int id);
-        void Update(T entity);
+        Task Update(T entity);
         Task SaveChangesAsync();
 
     }

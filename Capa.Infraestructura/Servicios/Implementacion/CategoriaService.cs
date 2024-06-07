@@ -1,4 +1,5 @@
-﻿using Capa.Aplicacion.Servicios.Interfaces;
+﻿using Capa.Aplicacion.DTI;
+using Capa.Aplicacion.Servicios.Interfaces;
 using Capa.Datos.Entidades;
 using Capa.Infraestructura.Repositorio.Interfaces;
 using System;
@@ -28,14 +29,22 @@ namespace Capa.Infraestructura.Servicios.Implementacion
             await _repositorio.SaveChangesAsync();
         }
 
-        public Task Delete(int id)
+        public async Task Delete(int id)
         {
-            throw new NotImplementedException();
+            await _repositorio.Delete(id);
         }
 
-        public Task Edit(Categoria T)
+        public async Task Edit(int id, Categoria categoria)
         {
-            throw new NotImplementedException();
+            var categoriaFind = await _repositorio.GetOne(id);
+            if (categoriaFind != null)
+            {
+                categoriaFind.Nombre = categoria.Nombre;
+                categoriaFind.UpdatedAt = DateTime.Now;
+
+                await _repositorio.Update(categoriaFind);
+            }       
+
         }
 
         public async Task<IEnumerable<Categoria>> Get(Expression<Func<Categoria, bool>>? filter = null, Expression<Func<Categoria, object>>? includes = null, bool tracked = true)
@@ -45,7 +54,12 @@ namespace Capa.Infraestructura.Servicios.Implementacion
 
         public Task<Categoria> GetOne(int id)
         {
-            throw new NotImplementedException();
+            var categoria = _repositorio.GetOne(id);
+
+            if (categoria == null) return null;
+
+            return categoria;
+
         }
     }
 }

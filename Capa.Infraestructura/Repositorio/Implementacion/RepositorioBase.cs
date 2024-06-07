@@ -19,7 +19,8 @@ namespace Capa.Infraestructura.Repositorio.Implementacion
 
         public async Task Add(T entity)
         {
-            await dbSet.AddAsync(entity); 
+            await dbSet.AddAsync(entity);
+            await SaveChangesAsync();
         }
 
         public async Task Delete(int id)
@@ -29,6 +30,7 @@ namespace Capa.Infraestructura.Repositorio.Implementacion
             if(entity != null)
             {
                 dbSet.Remove(entity);
+                await SaveChangesAsync();
             }
         }
 
@@ -68,9 +70,10 @@ namespace Capa.Infraestructura.Repositorio.Implementacion
             await _context.SaveChangesAsync();
         }
 
-        public void Update(T entity)
+        public async Task Update(T entity)
         {
             dbSet.Update(entity);
+            await SaveChangesAsync();
         }
     }
 }

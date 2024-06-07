@@ -30,7 +30,7 @@ namespace Capa.Aplicacion.Servicios.Implementacion
             }
         }
 
-        public async Task Edit(Producto producto)
+        public async Task Edit(int id, Producto producto)
         {
             _repositorio.Update(producto);
         }

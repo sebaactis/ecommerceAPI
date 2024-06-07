@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
+using Capa.Aplicacion.DTI;
 using Capa.Aplicacion.DTO;
 using Capa.Aplicacion.Servicios.Interfaces;
 using Capa.Datos.Entidades;
-using Capa.Infraestructura.Servicios.Implementacion;
 using Microsoft.AspNetCore.Mvc;
 
 
@@ -39,14 +39,29 @@ namespace CarritoDeCompras.Controllers
             }
         }
 
-        // GET api/<CategoriaController>/5
         [HttpGet("{id}")]
-        public string Get(int id)
+        public async Task<ActionResult<CategoriaDTO>> Get(int id)
         {
-            return "value";
+            try
+            {
+                var categoria = await _categoriaService.GetOne(id);
+
+                if (categoria == null)
+                {
+                    return NotFound();
+                }
+
+                var categoriaDto = _mapper.Map<CategoriaDTO>(categoria);
+
+                return categoriaDto;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+
         }
 
-        // POST api/<CategoriaController>
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] CategoriaDTO categoria)
         {
@@ -60,7 +75,7 @@ namespace CarritoDeCompras.Controllers
 
                 await _categoriaService.Add(newCategoria);
 
-                return Ok(newCategoria);
+                return Ok("Categoria creada correctamente!");
 
             }
             catch (Exception ex)
@@ -72,16 +87,56 @@ namespace CarritoDeCompras.Controllers
 
         }
 
-        // PUT api/<CategoriaController>/5
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        public async Task<IActionResult> Put(int id, [FromBody] CategoriaDTI categoriaDTI)
         {
+            try
+            {
+                if (categoriaDTI == null || categoriaDTI.NombreCategoria == null)
+                {
+                    return BadRequest();
+                }
+
+                try
+                {
+                    var categoriaFind = await _categoriaService.GetOne(id);
+
+                    if (categoriaFind == null)
+                    {
+                        return NotFound();
+                    }
+
+                    var categoria = _mapper.Map<Categoria>(categoriaDTI);
+                    await _categoriaService.Edit(id, categoria);
+
+                    return NoContent();
+                }
+
+                catch (Exception ex)
+                {
+                    return BadRequest(ex.Message);
+                }
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+
         }
 
-        // DELETE api/<CategoriaController>/5
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        public async Task<IActionResult> Delete(int id)
         {
+            try
+            {
+                await _categoriaService.Delete(id);
+
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
     }
 }

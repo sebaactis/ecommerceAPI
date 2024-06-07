@@ -13,7 +13,7 @@ namespace Capa.Aplicacion.Servicios.Interfaces
 
         Task<T> GetOne(int id);
         Task Add(T T);
-        Task Edit(T T);
+        Task Edit(int id, T T);
         Task Delete(int id);
 
     }
