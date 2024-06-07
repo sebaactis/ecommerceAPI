@@ -22,6 +22,8 @@ namespace Capa.Infraestructura.Servicios.Implementacion
 
         public async Task Add(Categoria categoria)
         {
+            categoria.CreatedAt = DateTime.Now;
+            categoria.UpdatedAt = DateTime.Now;
             await _repositorio.Add(categoria);
             await _repositorio.SaveChangesAsync();
         }
@@ -36,9 +38,9 @@ namespace Capa.Infraestructura.Servicios.Implementacion
             throw new NotImplementedException();
         }
 
-        public Task<IEnumerable<Categoria>> Get(Expression<Func<Categoria, bool>>? filter = null, Expression<Func<Categoria, object>>? includes = null, bool tracked = true)
+        public async Task<IEnumerable<Categoria>> Get(Expression<Func<Categoria, bool>>? filter = null, Expression<Func<Categoria, object>>? includes = null, bool tracked = true)
         {
-            throw new NotImplementedException();
+            return await _repositorio.GetAll(filter, includes, tracked);
         }
 
         public Task<Categoria> GetOne(int id)

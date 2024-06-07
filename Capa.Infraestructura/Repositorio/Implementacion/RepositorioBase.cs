@@ -19,8 +19,7 @@ namespace Capa.Infraestructura.Repositorio.Implementacion
 
         public async Task Add(T entity)
         {
-            await dbSet.AddAsync(entity);
-            
+            await dbSet.AddAsync(entity); 
         }
 
         public async Task Delete(int id)

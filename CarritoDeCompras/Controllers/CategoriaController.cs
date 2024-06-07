@@ -2,9 +2,9 @@
 using Capa.Aplicacion.DTO;
 using Capa.Aplicacion.Servicios.Interfaces;
 using Capa.Datos.Entidades;
+using Capa.Infraestructura.Servicios.Implementacion;
 using Microsoft.AspNetCore.Mvc;
 
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace CarritoDeCompras.Controllers
 {
@@ -23,9 +23,20 @@ namespace CarritoDeCompras.Controllers
         }
 
         [HttpGet]
-        public IEnumerable<string> Get()
+        public async Task<IEnumerable<CategoriaDTO>> Get()
         {
-            return new string[] { "value1", "value2" };
+            try
+            {
+                var categorias = await _categoriaService.Get();
+
+                var categoriasDto = _mapper.Map<IEnumerable<CategoriaDTO>>(categorias);
+
+                return categoriasDto;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
         }
 
         // GET api/<CategoriaController>/5
@@ -37,15 +48,28 @@ namespace CarritoDeCompras.Controllers
 
         // POST api/<CategoriaController>
         [HttpPost]
-        public async void Post([FromBody] CategoriaDTO categoria) 
+        public async Task<IActionResult> Post([FromBody] CategoriaDTO categoria)
         {
-            var newCategoria = new Categoria
+            try
             {
-                CategoriaId = categoria.CategoriaId,
-                Nombre = categoria.NombreCategoria,
-            };
+                var newCategoria = new Categoria
+                {
+                    CategoriaId = categoria.CategoriaId,
+                    Nombre = categoria.NombreCategoria,
+                };
 
-            await _categoriaService.Add(newCategoria);
+                await _categoriaService.Add(newCategoria);
+
+                return Ok(newCategoria);
+
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+
+
+
         }
 
         // PUT api/<CategoriaController>/5
