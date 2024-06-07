@@ -1,83 +1,60 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using AutoMapper;
+using Capa.Aplicacion.DTO;
+using Capa.Aplicacion.Servicios.Interfaces;
+using Capa.Datos.Entidades;
 using Microsoft.AspNetCore.Mvc;
+
+// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace CarritoDeCompras.Controllers
 {
-    public class ProductoController : Controller
+    [Route("api/[controller]")]
+    [ApiController]
+    public class ProductoController : ControllerBase
     {
-        // GET: ProductoController
-        public ActionResult Index()
+
+        private readonly IProductService _productService;
+        private readonly IMapper _mapper;
+
+        public ProductoController(IProductService productService, IMapper mapper)
         {
-            return View();
+            _productService = productService;
+            _mapper = mapper;
         }
 
-        // GET: ProductoController/Details/5
-        public ActionResult Details(int id)
+        [HttpGet]
+        public async Task<IEnumerable<ProductoDTO>> Get()
         {
-            return View();
+            var products = await _productService.Get(null, p => p.Categoria, true);
+
+            var productosDto = _mapper.Map<IEnumerable<ProductoDTO>>(products);
+
+            return productosDto;
         }
 
-        // GET: ProductoController/Create
-        public ActionResult Create()
+        // GET api/<ProductoController>/5
+        [HttpGet("{id}")]
+        public string Get(int id)
         {
-            return View();
+            return "value";
         }
 
-        // POST: ProductoController/Create
+        // POST api/<ProductoController>
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
+        public void Post([FromBody] string value)
         {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
         }
 
-        // GET: ProductoController/Edit/5
-        public ActionResult Edit(int id)
+        // PUT api/<ProductoController>/5
+        [HttpPut("{id}")]
+        public void Put(int id, [FromBody] string value)
         {
-            return View();
         }
 
-        // POST: ProductoController/Edit/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
+        // DELETE api/<ProductoController>/5
+        [HttpDelete("{id}")]
+        public void Delete(int id)
         {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
-
-        // GET: ProductoController/Delete/5
-        public ActionResult Delete(int id)
-        {
-            return View();
-        }
-
-        // POST: ProductoController/Delete/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
         }
     }
 }

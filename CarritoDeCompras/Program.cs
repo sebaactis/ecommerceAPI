@@ -1,3 +1,4 @@
+using Capa.Aplicacion.Mapper;
 using Capa.Infraestructura;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -10,6 +11,8 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddRegistroInfra(builder.Configuration);
+builder.Services.AddAutoMapper(typeof(MappingProfile));
+
 
 var app = builder.Build();
 
