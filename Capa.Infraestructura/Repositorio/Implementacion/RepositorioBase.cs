@@ -66,7 +66,7 @@ namespace Capa.Infraestructura.Repositorio.Implementacion
 
         public async Task SaveChangesAsync()
         {
-            _context.SaveChangesAsync();
+            await _context.SaveChangesAsync();
         }
 
         public void Update(T entity)

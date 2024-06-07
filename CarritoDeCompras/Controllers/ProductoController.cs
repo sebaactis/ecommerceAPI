@@ -1,10 +1,10 @@
 ﻿using AutoMapper;
+using Capa.Aplicacion.DTI;
 using Capa.Aplicacion.DTO;
 using Capa.Aplicacion.Servicios.Interfaces;
 using Capa.Datos.Entidades;
 using Microsoft.AspNetCore.Mvc;
 
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace CarritoDeCompras.Controllers
 {
@@ -41,8 +41,20 @@ namespace CarritoDeCompras.Controllers
 
         // POST api/<ProductoController>
         [HttpPost]
-        public void Post([FromBody] string value)
+        public async void Post([FromBody] ProductoDTI producto)
         {
+            var newProducto = new Producto
+            {
+                Nombre = producto.Nombre,
+                Descripcion = producto.Descripcion,
+                Precio = producto.Precio,
+                Stock = producto.Stock,
+                CategoriaId = producto.CategoriaId
+            };
+
+            await _productService.Add(newProducto);
+
+            Ok();
         }
 
         // PUT api/<ProductoController>/5
