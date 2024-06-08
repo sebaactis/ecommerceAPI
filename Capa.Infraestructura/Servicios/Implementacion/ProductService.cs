@@ -16,6 +16,8 @@ namespace Capa.Aplicacion.Servicios.Implementacion
 
         public async Task Add(Producto producto)
         {
+            producto.CreatedAt = DateTime.Now;
+            producto.UpdatedAt = DateTime.Now;
             await _repositorio.Add(producto);
             await _repositorio.SaveChangesAsync();
         }
@@ -24,7 +26,7 @@ namespace Capa.Aplicacion.Servicios.Implementacion
         {
             var product = await _repositorio.GetOne(id);
 
-            if(product != null)
+            if (product != null)
             {
                 await _repositorio.Delete(id);
             }
@@ -45,7 +47,9 @@ namespace Capa.Aplicacion.Servicios.Implementacion
         {
             var product = _repositorio.GetOne(id);
 
-            return product;
+            if (product != null) return product;
+
+            return null;
         }
     }
 }

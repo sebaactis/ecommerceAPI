@@ -25,36 +25,55 @@ namespace CarritoDeCompras.Controllers
         [HttpGet]
         public async Task<IEnumerable<ProductoDTO>> Get()
         {
-            var products = await _productService.Get(null, p => p.Categoria, true);
+            try
+            {
+                var products = await _productService.Get(null, p => p.Categoria, true);
 
-            var productosDto = _mapper.Map<IEnumerable<ProductoDTO>>(products);
+                var productosDto = _mapper.Map<IEnumerable<ProductoDTO>>(products);
 
-            return productosDto;
+                return productosDto;
+
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
         }
 
-        // GET api/<ProductoController>/5
         [HttpGet("{id}")]
-        public string Get(int id)
+        public async Task<ActionResult<ProductoDTO>> Get(int id)
         {
-            return "value";
+            try
+            {
+                if (id <= 0)
+                {
+                    return BadRequest();
+                }
+
+                var product = await _productService.GetOne(id);
+
+                if (product != null)
+                {
+                    var productoDto = _mapper.Map<ProductoDTO>(product);
+                    return Ok(productoDto);
+                }
+
+                return NoContent();
+
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
-        // POST api/<ProductoController>
         [HttpPost]
         public async void Post([FromBody] ProductoDTI producto)
         {
-            var newProducto = new Producto
-            {
-                Nombre = producto.Nombre,
-                Descripcion = producto.Descripcion,
-                Precio = producto.Precio,
-                Stock = producto.Stock,
-                CategoriaId = producto.CategoriaId
-            };
-
+            var newProducto = _mapper.Map<Producto>(producto);
             await _productService.Add(newProducto);
 
-            Ok();
+            Ok("Producto creado correctamente!");
         }
 
         // PUT api/<ProductoController>/5

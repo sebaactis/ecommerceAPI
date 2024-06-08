@@ -23,7 +23,7 @@ namespace CarritoDeCompras.Controllers
         }
 
         [HttpGet]
-        public async Task<IEnumerable<CategoriaDTO>> Get()
+        public async Task<ActionResult<IEnumerable<CategoriaDTO>>> Get()
         {
             try
             {
@@ -31,7 +31,7 @@ namespace CarritoDeCompras.Controllers
 
                 var categoriasDto = _mapper.Map<IEnumerable<CategoriaDTO>>(categorias);
 
-                return categoriasDto;
+                return Ok(categoriasDto);
             }
             catch (Exception ex)
             {
@@ -53,7 +53,7 @@ namespace CarritoDeCompras.Controllers
 
                 var categoriaDto = _mapper.Map<CategoriaDTO>(categoria);
 
-                return categoriaDto;
+                return Ok(categoriaDto);
             }
             catch (Exception ex)
             {
@@ -82,9 +82,6 @@ namespace CarritoDeCompras.Controllers
             {
                 return BadRequest(ex.Message);
             }
-
-
-
         }
 
         [HttpPut("{id}")]
@@ -92,7 +89,7 @@ namespace CarritoDeCompras.Controllers
         {
             try
             {
-                if (categoriaDTI == null || categoriaDTI.NombreCategoria == null)
+                if (categoriaDTI == null || categoriaDTI.NombreCategoria == null || id <= 0)
                 {
                     return BadRequest();
                 }
@@ -109,7 +106,7 @@ namespace CarritoDeCompras.Controllers
                     var categoria = _mapper.Map<Categoria>(categoriaDTI);
                     await _categoriaService.Edit(id, categoria);
 
-                    return NoContent();
+                    return Ok("Categoria editada correctamente");
                 }
 
                 catch (Exception ex)

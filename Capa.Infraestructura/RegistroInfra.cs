@@ -15,7 +15,7 @@ namespace Capa.Infraestructura
     {
         public static IServiceCollection AddRegistroInfra(this IServiceCollection services, IConfiguration configuration)
         {
-            var useInMemory = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Testing";
+            var useInMemory = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development";
 
             if (useInMemory)
             {
