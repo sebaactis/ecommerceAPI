@@ -3,6 +3,7 @@ using Capa.Aplicacion.DTI;
 using Capa.Aplicacion.DTO;
 using Capa.Aplicacion.Servicios.Interfaces;
 using Capa.Datos.Entidades;
+using Capa.Infraestructura.Servicios.Implementacion;
 using Microsoft.AspNetCore.Mvc;
 
 
@@ -50,7 +51,7 @@ namespace CarritoDeCompras.Controllers
                     return BadRequest();
                 }
 
-                var product = await _productService.GetOne(id);
+                var product = await _productService.GetOne(id, p => p.Categoria);
 
                 if (product != null)
                 {
@@ -68,24 +69,71 @@ namespace CarritoDeCompras.Controllers
         }
 
         [HttpPost]
-        public async void Post([FromBody] ProductoDTI producto)
+        public async Task<IActionResult> Post([FromBody] ProductoDTI producto)
         {
             var newProducto = _mapper.Map<Producto>(producto);
             await _productService.Add(newProducto);
 
-            Ok("Producto creado correctamente!");
+            return Ok("Producto creado correctamente!");
         }
 
-        // PUT api/<ProductoController>/5
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        public async Task<IActionResult> Put(int id, [FromBody] ProductoDTI productoDTI)
         {
+            try
+            {
+                if (productoDTI == null || id <= 0)
+                {
+                    return BadRequest();
+                }
+
+                try
+                {
+                    var productoFind = await _productService.GetOne(id);
+
+                    if (productoFind == null)
+                    {
+                        return NotFound();
+                    }
+
+                    var producto = _mapper.Map<Producto>(productoDTI);
+                    await _productService.Edit(id, producto);
+
+                    return Ok("Producto editado correctamente");
+                }
+
+                catch (Exception ex)
+                {
+                    return BadRequest(ex.Message);
+                }
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         // DELETE api/<ProductoController>/5
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        public async Task<IActionResult> Delete(int id)
         {
+            try
+            {
+                var productoFind = await _productService.GetOne(id);
+
+                if (productoFind == null)
+                {
+                    return NotFound("No existe un producto con ese id");
+                }
+
+                await _productService.Delete(id);
+
+                return Ok("Producto eliminado correctamente!");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
     }
 }

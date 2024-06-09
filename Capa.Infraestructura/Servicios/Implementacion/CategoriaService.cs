@@ -26,7 +26,6 @@ namespace Capa.Infraestructura.Servicios.Implementacion
             categoria.CreatedAt = DateTime.Now;
             categoria.UpdatedAt = DateTime.Now;
             await _repositorio.Add(categoria);
-            await _repositorio.SaveChangesAsync();
         }
 
         public async Task Delete(int id)
@@ -52,9 +51,9 @@ namespace Capa.Infraestructura.Servicios.Implementacion
             return await _repositorio.GetAll(filter, includes, tracked);
         }
 
-        public Task<Categoria> GetOne(int id)
+        public Task<Categoria> GetOne(int id, Expression<Func<Categoria, object>>? includes = null)
         {
-            var categoria = _repositorio.GetOne(id);
+            var categoria = _repositorio.GetOne(id, includes);
 
             if (categoria == null) return null;
 

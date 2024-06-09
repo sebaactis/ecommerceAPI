@@ -34,7 +34,18 @@ namespace Capa.Aplicacion.Servicios.Implementacion
 
         public async Task Edit(int id, Producto producto)
         {
-            _repositorio.Update(producto);
+            var productoFind = await _repositorio.GetOne(id);
+            if (productoFind != null)
+            {
+                productoFind.Nombre = producto.Nombre;
+                productoFind.Descripcion = producto.Descripcion;
+                productoFind.Precio = producto.Precio;
+                productoFind.Stock = producto.Stock;
+                productoFind.CategoriaId = producto.CategoriaId;
+                productoFind.UpdatedAt = DateTime.Now;
+
+                await _repositorio.Update(productoFind);
+            }
         }
 
         public async Task<IEnumerable<Producto>> Get(Expression<Func<Producto, bool>>? filter = null, Expression<Func<Producto, object>>? includes = null, bool tracked = true)
@@ -43,9 +54,9 @@ namespace Capa.Aplicacion.Servicios.Implementacion
             return products;
         }
 
-        public Task<Producto> GetOne(int id)
+        public Task<Producto> GetOne(int id, Expression<Func<Producto, object>>? includes = null)
         {
-            var product = _repositorio.GetOne(id);
+            var product = _repositorio.GetOne(id, includes);
 
             if (product != null) return product;
 

@@ -56,13 +56,20 @@ namespace Capa.Infraestructura.Repositorio.Implementacion
             return await query.ToListAsync();
         }
 
-        public async Task<T> GetOne(int id)
+        public async Task<T> GetOne(int id, Expression<Func<T, object>>? includes = null)
         {
-            var entity = await dbSet.FindAsync(id);
+            IQueryable<T> query = dbSet;
+
+            if (includes != null)
+            {
+                query = query.Include(includes);
+            }
+
+            var entity = await query.FirstOrDefaultAsync(e => EF.Property<int>(e, "ProductoId") == id);
 
             if (entity != null) return entity;
 
-            return null;
+            return null;    
         }
 
         public async Task SaveChangesAsync()

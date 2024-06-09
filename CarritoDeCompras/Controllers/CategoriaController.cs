@@ -126,9 +126,16 @@ namespace CarritoDeCompras.Controllers
         {
             try
             {
+                var categoriaFind = await _categoriaService.GetOne(id);
+
+                if (categoriaFind == null)
+                {
+                    return NotFound("No existe una categoria con ese ID");
+                }
+
                 await _categoriaService.Delete(id);
 
-                return Ok();
+                return Ok("Categoria eliminada correctamente!");
             }
             catch (Exception ex)
             {

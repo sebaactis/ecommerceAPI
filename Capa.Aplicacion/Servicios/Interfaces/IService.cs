@@ -11,7 +11,7 @@ namespace Capa.Aplicacion.Servicios.Interfaces
     {
         Task<IEnumerable<T>> Get(Expression<Func<T, bool>>? filter = null, Expression<Func<T, object>>? includes = null, bool tracked = true);
 
-        Task<T> GetOne(int id);
+        Task<T> GetOne(int id, Expression<Func<T, object>>? includes = null);
         Task Add(T T);
         Task Edit(int id, T T);
         Task Delete(int id);
