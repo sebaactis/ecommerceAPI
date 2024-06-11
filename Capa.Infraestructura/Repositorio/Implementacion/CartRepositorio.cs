@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -52,7 +53,8 @@ namespace Capa.Infraestructura.Repositorio.Implementacion
 
         public async Task<Cart> GetCartById(int cartId)
         {
-            var cart = await dbSet.FirstOrDefaultAsync(c => c.CartId == cartId);
+
+            var cart = await dbSet.Include(c => c.CartItems).ThenInclude(ci => ci.Producto).ThenInclude(p => p.Categoria).FirstOrDefaultAsync(c => c.CartId == cartId);
 
             if (cart != null) return cart;
 

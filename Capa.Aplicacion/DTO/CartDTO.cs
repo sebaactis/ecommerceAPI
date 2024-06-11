@@ -10,5 +10,6 @@ namespace Capa.Aplicacion.DTO
     public class CartDTO
     {
         public ICollection<CartItemDTO> CartItems { get; set; }
+
     }
 }

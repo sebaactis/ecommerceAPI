@@ -3,6 +3,8 @@ using Capa.Aplicacion.DTO;
 using Capa.Aplicacion.Servicios.Interfaces;
 using Capa.Datos.Entidades;
 using Microsoft.AspNetCore.Mvc;
+using System.Text.Json.Serialization;
+using System.Text.Json;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -28,7 +30,6 @@ namespace CarritoDeCompras.Controllers
             try
             {
                 var cart = await _cartService.GetCartById(cartId);
-
 
                 if (cart != null)
                 {
