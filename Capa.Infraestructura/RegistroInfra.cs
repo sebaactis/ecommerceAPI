@@ -1,4 +1,5 @@
-﻿using Capa.Aplicacion.Servicios.Implementacion;
+﻿using Capa.Aplicacion.Repositorios.Interfaces;
+using Capa.Aplicacion.Servicios.Implementacion;
 using Capa.Aplicacion.Servicios.Interfaces;
 using Capa.Infraestructura.Persistencia;
 using Capa.Infraestructura.Repositorio.Implementacion;
@@ -30,8 +31,10 @@ namespace Capa.Infraestructura
 
 
             services.AddScoped(typeof(IRepositorioBase<>), typeof(RepositorioBase<>));
+            services.AddScoped<ICartRepositorio, CartRepositorio>();
             services.AddScoped<IProductService, ProductService>();
             services.AddScoped<ICategoriaService, CategoriaService>();
+            services.AddScoped<ICartService, CartService>();
 
             return services;
         }

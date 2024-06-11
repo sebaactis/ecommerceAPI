@@ -17,6 +17,11 @@ namespace Capa.Aplicacion.Mapper
 
             CreateMap<Categoria, CategoriaDTO>().ForMember(dest => dest.NombreCategoria, opt => opt.MapFrom(src => src.Nombre)).ReverseMap();
             CreateMap<Categoria, CategoriaDTI>().ForMember(dest => dest.NombreCategoria, opt => opt.MapFrom(src => src.Nombre)).ReverseMap();
+
+            CreateMap<Cart, CartDTO>().ReverseMap();
+            CreateMap<CartItem, CartItemDTO>().ReverseMap();
+
+
         }
     }
 }
