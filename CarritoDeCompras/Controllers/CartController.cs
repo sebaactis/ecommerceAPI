@@ -5,6 +5,8 @@ using Capa.Datos.Entidades;
 using Microsoft.AspNetCore.Mvc;
 using System.Text.Json.Serialization;
 using System.Text.Json;
+using Capa.Aplicacion.DTI;
+using Microsoft.AspNetCore.Authorization;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -67,7 +69,7 @@ namespace CarritoDeCompras.Controllers
 
         [HttpPost]
         [Route("AddProduct")]
-        public async Task<IActionResult> Add(int cartId, [FromBody] CartItemDTO cartItem)
+        public async Task<IActionResult> Add(int cartId, [FromBody] CartItemDTI cartItem)
         {
             try
             {
@@ -88,20 +90,26 @@ namespace CarritoDeCompras.Controllers
                 return BadRequest();
             }
 
-
-
-        }
-
-        // PUT api/<CartController>/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
-        {
         }
 
         // DELETE api/<CartController>/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
+        [HttpDelete]
+        public async Task<IActionResult> Delete(int cartId, [FromBody] CartItemDTI cartItemDTI)
         {
+            try
+            {
+
+                var cartItem = _mapper.Map<CartItem>(cartItemDTI);
+
+                await _cartService.RemoveProduct(cartId, cartItem);
+
+                return Ok("Producto elimado del carrito correctamente");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest();
+            }
+
         }
     }
 }

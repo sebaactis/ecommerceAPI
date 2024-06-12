@@ -1,14 +1,9 @@
-﻿using Capa.Aplicacion.DTO;
+﻿
 using Capa.Aplicacion.Repositorios.Interfaces;
 using Capa.Datos.Entidades;
 using Capa.Infraestructura.Persistencia;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace Capa.Infraestructura.Repositorio.Implementacion
 {
@@ -16,17 +11,19 @@ namespace Capa.Infraestructura.Repositorio.Implementacion
     {
 
         protected readonly CarritoDbContext _context;
-        private readonly DbSet<Cart> dbSet;
+        private readonly DbSet<Cart> dbSetCart;
+        private readonly DbSet<CartItem> dbSetCartItem;
 
         public CartRepositorio(CarritoDbContext context)
         {
             _context = context;
-            this.dbSet = _context.Set<Cart>();
+            this.dbSetCart = _context.Set<Cart>();
+            this.dbSetCartItem = _context.Set<CartItem>();
         }
 
         public async Task AddProduct(CartItem cartItem)
         {
-            var existingCart = await dbSet.Include(c => c.CartItems)
+            var existingCart = await dbSetCart.Include(c => c.CartItems)
                                   .FirstOrDefaultAsync(c => c.CartId == cartItem.CartId);
 
             if (existingCart == null) return;
@@ -47,28 +44,45 @@ namespace Capa.Infraestructura.Repositorio.Implementacion
 
         public async Task createCart(Cart cart)
         {
-            await dbSet.AddAsync(cart);
+            await dbSetCart.AddAsync(cart);
             await SaveChangesAsync();
         }
 
         public async Task<Cart> GetCartById(int cartId)
         {
 
-            var cart = await dbSet.Include(c => c.CartItems).ThenInclude(ci => ci.Producto).ThenInclude(p => p.Categoria).FirstOrDefaultAsync(c => c.CartId == cartId);
+            var cart = await dbSetCart.Include(c => c.CartItems).ThenInclude(ci => ci.Producto).ThenInclude(p => p.Categoria).FirstOrDefaultAsync(c => c.CartId == cartId);
 
             if (cart != null) return cart;
 
             return null;
         }
 
-        public Task<Cart> RemoveProduct(int cartId, CartItem cartItem)
+        public async Task RemoveProduct(int cartId, CartItem cartItem)
         {
-            throw new NotImplementedException();
-        }
+            var existingCart = await dbSetCart.Include(c => c.CartItems)
+                                  .FirstOrDefaultAsync(c => c.CartId == cartId);
 
-        public Task<Cart> RemoveQuantityProduct(int cartId, CartItem cartItem)
-        {
-            throw new NotImplementedException();
+            if (existingCart == null) return;
+
+            var existingCartItem = existingCart.CartItems.FirstOrDefault(ci => ci.ProductId == cartItem.ProductId);
+
+            if (existingCartItem == null) return;
+
+            cartItem.CartItemId = existingCartItem.CartItemId;
+
+            if(existingCartItem.Cantidad > cartItem.Cantidad)
+            {
+                existingCartItem.Cantidad -= cartItem.Cantidad;
+            }
+            else
+            {
+                existingCart.CartItems.Remove(existingCartItem);
+
+                dbSetCartItem.Remove(existingCartItem);
+            }
+
+            await SaveChangesAsync();
         }
 
         public async Task SaveChangesAsync()

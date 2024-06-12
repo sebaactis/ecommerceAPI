@@ -21,6 +21,8 @@ namespace Capa.Aplicacion.Mapper
             CreateMap<Cart, CartDTO>().ReverseMap();
             CreateMap<CartItem, CartItemDTO>().ReverseMap();
 
+            CreateMap<CartItem, CartItemDTI>().ReverseMap();
+
 
         }
     }

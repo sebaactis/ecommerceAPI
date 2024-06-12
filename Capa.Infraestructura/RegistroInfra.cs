@@ -5,6 +5,7 @@ using Capa.Infraestructura.Persistencia;
 using Capa.Infraestructura.Repositorio.Implementacion;
 using Capa.Infraestructura.Repositorio.Interfaces;
 using Capa.Infraestructura.Servicios.Implementacion;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -27,6 +28,10 @@ namespace Capa.Infraestructura
             {
                 services.AddDbContext<CarritoDbContext>(options => options.UseSqlServer(configuration.GetConnectionString("DevConnection"), b => b.MigrationsAssembly("CarritoDeCompras")));
             }
+
+            services.AddIdentity<IdentityUser, IdentityRole>()
+                .AddEntityFrameworkStores<CarritoDbContext>()
+                .AddDefaultTokenProviders();
 
 
 

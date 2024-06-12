@@ -1,9 +1,11 @@
 ﻿using Capa.Datos.Entidades;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace Capa.Infraestructura.Persistencia
 {
-    public class CarritoDbContext : DbContext
+    public class CarritoDbContext : IdentityDbContext<IdentityUser>
     {
         public CarritoDbContext(DbContextOptions<CarritoDbContext> options) : base(options)
         {
@@ -19,6 +21,8 @@ namespace Capa.Infraestructura.Persistencia
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            base.OnModelCreating(modelBuilder);
+
             modelBuilder.Entity<Producto>()
                 .HasOne(p => p.Categoria)
                 .WithMany(c => c.Productos)

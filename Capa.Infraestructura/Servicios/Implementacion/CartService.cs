@@ -56,14 +56,18 @@ namespace Capa.Infraestructura.Servicios.Implementacion
             return null;
         }
 
-        public Task<Cart> RemoveProduct(int cartId, CartItem cartItem)
+        public async Task RemoveProduct(int cartId, CartItem cartItem)
         {
-            throw new NotImplementedException();
+            var prodExis = await _productService.GetOne(cartItem.ProductId);
+
+            if (prodExis == null) return;
+
+            var cartExis = await _cartRepositorio.GetCartById(cartId);
+
+            if (cartExis == null) return;
+
+            await _cartRepositorio.RemoveProduct(cartId, cartItem);
         }
 
-        public Task<Cart> RemoveQuantityProduct(int cartId, CartItem cartItem)
-        {
-            throw new NotImplementedException();
-        }
     }
 }
