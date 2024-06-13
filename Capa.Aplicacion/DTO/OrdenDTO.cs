@@ -1,16 +1,16 @@
-﻿using System;
+﻿using Capa.Datos.Entidades;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Capa.Datos.Entidades
+namespace Capa.Aplicacion.DTO
 {
-    public class Orden
+    public class OrdenDTO
     {
         public int OrdenId { get; set; }
-        public DateTime OrdenDate { get; set; }
         public decimal Total { get; set; }
-        public ICollection<OrdenItem> OrdenItems { get; set; }
+        public ICollection<OrdenItemDTO> OrdenItems { get; set; }
     }
 }

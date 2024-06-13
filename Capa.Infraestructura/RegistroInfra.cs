@@ -40,6 +40,8 @@ namespace Capa.Infraestructura
             services.AddScoped<IProductService, ProductService>();
             services.AddScoped<ICategoriaService, CategoriaService>();
             services.AddScoped<ICartService, CartService>();
+            services.AddScoped<IOrdenRepositorio, OrdenRepositorio>();
+            services.AddScoped<IOrdenService, OrdenService>();
 
             return services;
         }

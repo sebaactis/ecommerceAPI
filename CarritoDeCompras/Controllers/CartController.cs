@@ -92,7 +92,6 @@ namespace CarritoDeCompras.Controllers
 
         }
 
-        // DELETE api/<CartController>/5
         [HttpDelete]
         public async Task<IActionResult> Delete(int cartId, [FromBody] CartItemDTI cartItemDTI)
         {
