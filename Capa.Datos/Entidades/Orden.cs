@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Identity;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,6 +11,8 @@ namespace Capa.Datos.Entidades
     {
         public int OrdenId { get; set; }
         public DateTime OrdenDate { get; set; }
+        public string UserId { get; set; }
+        public User User { get; set; }
         public decimal Total { get; set; }
         public ICollection<OrdenItem> OrdenItems { get; set; }
     }

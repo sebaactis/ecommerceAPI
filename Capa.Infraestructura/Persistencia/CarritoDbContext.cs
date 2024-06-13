@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Capa.Infraestructura.Persistencia
 {
-    public class CarritoDbContext : IdentityDbContext<IdentityUser>
+    public class CarritoDbContext : IdentityDbContext<User>
     {
         public CarritoDbContext(DbContextOptions<CarritoDbContext> options) : base(options)
         {
@@ -52,6 +52,18 @@ namespace Capa.Infraestructura.Persistencia
                  .WithMany(p => p.OrdenItems)
                  .HasForeignKey(oi => oi.ProductoId)
                  .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Orden>()
+                .HasOne(o => o.User)
+                .WithMany(u => u.Ordenes)
+                .HasForeignKey(o => o.UserId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Cart>()
+                .HasOne(c => c.User)
+                .WithMany(u => u.Carts)
+                .HasForeignKey(c => c.UserId)
+                .OnDelete(DeleteBehavior.Restrict);
         }
 
     }
