@@ -18,7 +18,7 @@ namespace Capa.Infraestructura.Servicios.Implementacion
 
         public async Task Create(int cartId)
         {
-            var cart = await _cartService.GetCartById(cartId);
+            var cart = await _cartService.GetCartById("cartId");
             var cartItems = cart.CartItems;
 
             Orden orden = new Orden

@@ -48,10 +48,10 @@ namespace Capa.Infraestructura.Repositorio.Implementacion
             await SaveChangesAsync();
         }
 
-        public async Task<Cart> GetCartById(int cartId)
+        public async Task<Cart> GetCartById(string userId)
         {
 
-            var cart = await dbSetCart.Include(c => c.CartItems).ThenInclude(ci => ci.Producto).ThenInclude(p => p.Categoria).FirstOrDefaultAsync(c => c.CartId == cartId);
+            var cart = await dbSetCart.Include(c => c.User).Include(c => c.CartItems).ThenInclude(ci => ci.Producto).ThenInclude(p => p.Categoria).FirstOrDefaultAsync(c => c.UserId == userId);
 
             if (cart != null) return cart;
 
@@ -71,7 +71,7 @@ namespace Capa.Infraestructura.Repositorio.Implementacion
 
             cartItem.CartItemId = existingCartItem.CartItemId;
 
-            if(existingCartItem.Cantidad > cartItem.Cantidad)
+            if (existingCartItem.Cantidad > cartItem.Cantidad)
             {
                 existingCartItem.Cantidad -= cartItem.Cantidad;
             }

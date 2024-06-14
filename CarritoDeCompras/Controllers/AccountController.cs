@@ -1,6 +1,8 @@
-﻿using Capa.Datos.Modelos;
+﻿using Capa.Datos.Entidades;
+using Capa.Datos.Modelos;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -13,10 +15,10 @@ namespace CarritoDeCompras.Controllers
     [ApiController]
     public class AccountController : ControllerBase
     {
-        private readonly UserManager<IdentityUser> _userManager;
+        private readonly UserManager<User> _userManager;
         private readonly IConfiguration _configuration;
 
-        public AccountController(UserManager<IdentityUser> userManager, IConfiguration configuration)
+        public AccountController(UserManager<User> userManager, IConfiguration configuration)
         {
             _userManager = userManager;
             _configuration = configuration;
@@ -31,7 +33,7 @@ namespace CarritoDeCompras.Controllers
                 return BadRequest(ModelState);
             }
 
-            var user = new IdentityUser
+            var user = new User
             {
                 UserName = model.Username,
                 Email = model.Email,
@@ -55,32 +57,35 @@ namespace CarritoDeCompras.Controllers
 
             if (user != null && await _userManager.CheckPasswordAsync(user, model.Password))
             {
-                var token = GenerateJwtToken(user.UserName);
+                var token = GenerateJwtToken(user.UserName, user.Id);
                 return Ok(new { Token = token });
             }
 
             return Unauthorized();
-        }
+        }       
 
-        private string GenerateJwtToken(string username)
+        private string GenerateJwtToken(string username, string id)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
 
-            var key = Encoding.ASCII.GetBytes(_configuration["Jwt:Key"]);
+            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
+            var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
 
-            var tokenDescriptor = new SecurityTokenDescriptor
+            var claims = new[]
             {
-                Subject = new ClaimsIdentity(new Claim[]
-                {
-                    new Claim(ClaimTypes.Name, username)
-                }),
-                Expires = DateTime.UtcNow.AddMinutes(5),
-                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+                new Claim(ClaimTypes.Name, username),
+                new Claim("UserId", id)
             };
 
-            var token = tokenHandler.CreateToken(tokenDescriptor);
+            var token = new JwtSecurityToken(
+                issuer: _configuration["Jwt:Issuer"],
+                audience: _configuration["Jwt:Audience"],
+                claims: claims,
+                expires: DateTime.Now.AddMinutes(10),
+                signingCredentials: credentials
+                );
 
-            return tokenHandler.WriteToken(token);
+            return tokenHandler.WriteToken(token);    
         }
     }
 }

@@ -12,7 +12,7 @@ namespace Capa.Aplicacion.Repositorios.Interfaces
     public interface ICartRepositorio
     {
         Task createCart(Cart cart);
-        Task<Cart> GetCartById(int cartId);
+        Task<Cart> GetCartById(string userId);
         Task AddProduct(CartItem cartItem);
         Task RemoveProduct(int cartId, CartItem cartItem);
         Task SaveChangesAsync();

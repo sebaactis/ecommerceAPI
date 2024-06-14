@@ -1,14 +1,21 @@
-﻿using Capa.Aplicacion.Repositorios.Interfaces;
+﻿using Capa.Aplicacion.Mapper;
+using Capa.Aplicacion.Repositorios.Interfaces;
 using Capa.Aplicacion.Servicios.Implementacion;
 using Capa.Aplicacion.Servicios.Interfaces;
+using Capa.Datos.Entidades;
 using Capa.Infraestructura.Persistencia;
 using Capa.Infraestructura.Repositorio.Implementacion;
 using Capa.Infraestructura.Repositorio.Interfaces;
 using Capa.Infraestructura.Servicios.Implementacion;
+using Capa.Infraestructura.Servicios.Utilidades;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 
 namespace Capa.Infraestructura
@@ -29,7 +36,7 @@ namespace Capa.Infraestructura
                 services.AddDbContext<CarritoDbContext>(options => options.UseSqlServer(configuration.GetConnectionString("DevConnection"), b => b.MigrationsAssembly("CarritoDeCompras")));
             }
 
-            services.AddIdentity<IdentityUser, IdentityRole>()
+            services.AddIdentity<User, IdentityRole>()
                 .AddEntityFrameworkStores<CarritoDbContext>()
                 .AddDefaultTokenProviders();
 
@@ -42,6 +49,8 @@ namespace Capa.Infraestructura
             services.AddScoped<ICartService, CartService>();
             services.AddScoped<IOrdenRepositorio, OrdenRepositorio>();
             services.AddScoped<IOrdenService, OrdenService>();
+
+            services.AddAutoMapper(typeof(MappingProfile));
 
             return services;
         }

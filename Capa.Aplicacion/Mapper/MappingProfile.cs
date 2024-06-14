@@ -25,6 +25,8 @@ namespace Capa.Aplicacion.Mapper
 
             CreateMap<Orden, OrdenDTO>().ReverseMap();
             CreateMap<OrdenItem, OrdenItemDTO>().ReverseMap();
+
+            CreateMap<User, UserDTO>().ReverseMap();
         }
     }
 }

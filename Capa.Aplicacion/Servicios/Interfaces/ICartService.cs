@@ -12,8 +12,8 @@ namespace Capa.Aplicacion.Servicios.Interfaces
     public interface ICartService
     {
         Task createCart(Cart cart);
-        Task<Cart> GetCartById(int cartId);
-        Task AddProduct(CartItem cartItem);
-        Task RemoveProduct(int cartId, CartItem cartItem);
+        Task<Cart> GetCartById(string userId);
+        Task AddProduct(CartItem cartItem, string userId);
+        Task RemoveProduct(CartItem cartItem, string userId);
     }
 }

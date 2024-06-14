@@ -23,22 +23,22 @@ namespace Capa.Infraestructura.Servicios.Implementacion
             _productService = productService;
         }
 
-        public async Task AddProduct(CartItem cartItem)
+        public async Task AddProduct(CartItem cartItem, string userId)
         {
             var prodExis = await _productService.GetOne(cartItem.ProductId);
 
             if (prodExis == null) return;
 
-            var cartExis = await _cartRepositorio.GetCartById(cartItem.CartId);
+            var cartExis = await _cartRepositorio.GetCartById(userId);
 
-            if(cartExis == null) return;
+            if (cartExis == null) return;
 
             await _cartRepositorio.AddProduct(cartItem);
         }
 
         public async Task createCart(Cart cart)
         {
-            var cartExist = await _cartRepositorio.GetCartById(cart.CartId);
+            var cartExist = await _cartRepositorio.GetCartById(cart.UserId);
 
             if (cartExist != null) return;
 
@@ -47,26 +47,26 @@ namespace Capa.Infraestructura.Servicios.Implementacion
             await _cartRepositorio.createCart(cart);
         }
 
-        public async Task<Cart> GetCartById(int cartId)
+        public async Task<Cart> GetCartById(string userId)
         {
-            var cart =  await _cartRepositorio.GetCartById(cartId);
+            var cart = await _cartRepositorio.GetCartById(userId);
 
-            if(cart != null) return cart;
+            if (cart != null) return cart;
 
             return null;
         }
 
-        public async Task RemoveProduct(int cartId, CartItem cartItem)
+        public async Task RemoveProduct(CartItem cartItem, string userId)
         {
             var prodExis = await _productService.GetOne(cartItem.ProductId);
 
             if (prodExis == null) return;
 
-            var cartExis = await _cartRepositorio.GetCartById(cartId);
+            var cartExis = await _cartRepositorio.GetCartById(userId);
 
             if (cartExis == null) return;
 
-            await _cartRepositorio.RemoveProduct(cartId, cartItem);
+            await _cartRepositorio.RemoveProduct(cartExis.CartId, cartItem);
         }
 
     }
