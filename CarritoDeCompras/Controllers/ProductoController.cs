@@ -51,7 +51,7 @@ namespace CarritoDeCompras.Controllers
                     return BadRequest();
                 }
 
-                var product = await _productService.GetOne(id, p => p.Categoria);
+                var product = await _productService.GetOne(id, "ProductoId", p => p.Categoria);
 
                 if (product != null)
                 {
@@ -89,7 +89,7 @@ namespace CarritoDeCompras.Controllers
 
                 try
                 {
-                    var productoFind = await _productService.GetOne(id);
+                    var productoFind = await _productService.GetOne(id, "ProductoId");
 
                     if (productoFind == null)
                     {
@@ -119,14 +119,14 @@ namespace CarritoDeCompras.Controllers
         {
             try
             {
-                var productoFind = await _productService.GetOne(id);
+                var productoFind = await _productService.GetOne(id, "ProductoId");
 
                 if (productoFind == null)
                 {
                     return NotFound("No existe un producto con ese id");
                 }
 
-                await _productService.Delete(id);
+                await _productService.Delete(id, "ProductoId");
 
                 return Ok("Producto eliminado correctamente!");
             }

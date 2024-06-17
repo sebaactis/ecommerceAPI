@@ -14,27 +14,27 @@ namespace Capa.Aplicacion.Servicios.Implementacion
             _repositorio = repositorio;
         }
 
-        public async Task Add(Producto producto)
+        public async Task<Producto> Add(Producto producto)
         {
             producto.CreatedAt = DateTime.Now;
             producto.UpdatedAt = DateTime.Now;
-            await _repositorio.Add(producto);
-            await _repositorio.SaveChangesAsync();
+            var product = await _repositorio.Add(producto);
+            return product;
         }
 
-        public async Task Delete(int id)
+        public async Task Delete(int id, string property)
         {
-            var product = await _repositorio.GetOne(id);
+            var product = await _repositorio.GetOne(id, property);
 
             if (product != null)
             {
-                await _repositorio.Delete(id);
+                await _repositorio.Delete(id, "ProductoId");
             }
         }
 
         public async Task Edit(int id, Producto producto)
         {
-            var productoFind = await _repositorio.GetOne(id);
+            var productoFind = await _repositorio.GetOne(id, "ProductoId");
             if (productoFind != null)
             {
                 productoFind.Nombre = producto.Nombre;
@@ -54,9 +54,9 @@ namespace Capa.Aplicacion.Servicios.Implementacion
             return products;
         }
 
-        public Task<Producto> GetOne(int id, Expression<Func<Producto, object>>? includes = null)
+        public Task<Producto> GetOne(int id, string property, Expression<Func<Producto, object>>? includes = null)
         {
-            var product = _repositorio.GetOne(id, includes);
+            var product = _repositorio.GetOne(id, property, includes);
 
             if (product != null) return product;
 

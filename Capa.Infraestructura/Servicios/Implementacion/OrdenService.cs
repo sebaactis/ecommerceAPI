@@ -16,21 +16,27 @@ namespace Capa.Infraestructura.Servicios.Implementacion
             _cartService = cartService;
         }
 
-        public async Task Create(int cartId)
+        public async Task<Orden> Create(string userId)
         {
-            var cart = await _cartService.GetCartById("cartId");
+            var cart = await _cartService.GetCartById(userId);
+
+            if (cart == null) return null;
+
             var cartItems = cart.CartItems;
+
+            if (cartItems.Count() <= 0) throw new Exception("El carrito actual se encuentra vacio");
 
             Orden orden = new Orden
             {
                 OrdenDate = DateTime.Now,
                 OrdenItems = new List<OrdenItem>(),
+                UserId = cart.UserId,
                 Total = 0
             };
 
             foreach (var cartItem in cartItems)
             {
-                var product = await _productService.GetOne(cartItem.ProductId);
+                var product = await _productService.GetOne(cartItem.ProductId, "ProductoId");
 
                 OrdenItem ordenItem = new OrdenItem
                 {
@@ -40,10 +46,15 @@ namespace Capa.Infraestructura.Servicios.Implementacion
                 };
 
                 orden.OrdenItems.Add(ordenItem);
-                orden.Total += (ordenItem.Cantidad * ordenItem.PrecioUnitario); 
+                orden.Total += (ordenItem.Cantidad * ordenItem.PrecioUnitario);
             };
 
-            await _ordenRepositorio.Create(orden);
+            await _cartService.ResetCart(cart.UserId);
+            var result = await _ordenRepositorio.Create(orden);
+
+            if (result != null) return result;
+
+            throw new Exception("Ocurrió un error al intentar crear su orden, intente de nuevo más tardes");
         }
 
         public async Task<Orden> Get(int ordenId)
@@ -53,6 +64,15 @@ namespace Capa.Infraestructura.Servicios.Implementacion
             if (orden == null) return null;
 
             return orden;
+        }
+
+        public async Task<IEnumerable<Orden>> GetAllById(string userId)
+        {
+            var result = await _ordenRepositorio.GetAllById(userId);
+
+            if(result != null) return result;
+
+            return null;
         }
     }
 }

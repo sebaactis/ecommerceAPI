@@ -17,17 +17,24 @@ namespace Capa.Infraestructura.Repositorio.Implementacion
             this.dbSet = _context.Set<T>();
         }
 
-        public async Task Add(T entity)
+        public async Task<T> Add(T entity)
         {
-            await dbSet.AddAsync(entity);
-            await SaveChangesAsync();
+            var result = await dbSet.AddAsync(entity);
+
+            if (result.State == EntityState.Added)
+            {
+                await SaveChangesAsync();
+                return entity;
+            }
+
+            return null;
         }
 
-        public async Task Delete(int id)
+        public async Task Delete(int id, string property)
         {
-            var entity = await GetOne(id);
+            var entity = await GetOne(id, property);
 
-            if(entity != null)
+            if (entity != null)
             {
                 dbSet.Remove(entity);
                 await SaveChangesAsync();
@@ -38,7 +45,7 @@ namespace Capa.Infraestructura.Repositorio.Implementacion
         {
             IQueryable<T> query = dbSet;
 
-            if(filter != null)
+            if (filter != null)
             {
                 query = query.Where(filter);
             }
@@ -48,7 +55,7 @@ namespace Capa.Infraestructura.Repositorio.Implementacion
                 query = query.Include(includes);
             }
 
-            if(!tracked)
+            if (!tracked)
             {
                 query = query.AsNoTracking();
             }
@@ -56,7 +63,7 @@ namespace Capa.Infraestructura.Repositorio.Implementacion
             return await query.ToListAsync();
         }
 
-        public async Task<T> GetOne(int id, Expression<Func<T, object>>? includes = null)
+        public async Task<T> GetOne(int id, string? property, Expression<Func<T, object>>? includes = null)
         {
             IQueryable<T> query = dbSet;
 
@@ -65,11 +72,13 @@ namespace Capa.Infraestructura.Repositorio.Implementacion
                 query = query.Include(includes);
             }
 
-            var entity = await query.FirstOrDefaultAsync(e => EF.Property<int>(e, "ProductoId") == id);
+            if (property != null)
+            {
+                var entity = await query.FirstOrDefaultAsync(e => EF.Property<int>(e, property) == id);
 
-            if (entity != null) return entity;
-
-            return null;    
+                if (entity != null) return entity;
+            }
+            return null;
         }
 
         public async Task SaveChangesAsync()

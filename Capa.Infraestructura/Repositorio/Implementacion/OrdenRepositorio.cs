@@ -18,20 +18,43 @@ namespace Capa.Infraestructura.Repositorio.Implementacion
             this.dbSet = _context.Set<Orden>();
         }
 
-        public async Task Create(Orden orden)
+        public async Task<Orden> Create(Orden orden)
         {
-            await dbSet.AddAsync(orden);
-            await SaveChangesAsync();
+            var ordenCreate = await dbSet.AddAsync(orden);
+
+            if (ordenCreate.State == EntityState.Added)
+            {
+                await SaveChangesAsync();
+
+                return orden;
+            }
+
+            return null;
         }
 
         public async Task<Orden> Get(int ordenId)
         {
 
-            var orden = await dbSet.Include(o => o.OrdenItems).ThenInclude(oi => oi.Producto).ThenInclude(p => p.Categoria).FirstOrDefaultAsync(o => o.OrdenId == ordenId);
+            var orden = await dbSet.Include(o => o.User).Include(o => o.OrdenItems).ThenInclude(oi => oi.Producto).ThenInclude(p => p.Categoria).FirstOrDefaultAsync(o => o.OrdenId == ordenId);
 
             if (orden == null) return null;
 
             return orden;
+        }
+
+        public async Task<IEnumerable<Orden>> GetAllById(string userId)
+        {
+            var ordenes = await dbSet
+                .Where(o => o.UserId == userId)
+                .Include(o => o.User)
+                .Include(o => o.OrdenItems)
+                .ThenInclude(oi => oi.Producto)
+                .ThenInclude(p => p.Categoria)
+                .ToListAsync();
+
+            if (ordenes.Count == 0) return null;
+
+            return ordenes;
         }
 
         public async Task SaveChangesAsync()

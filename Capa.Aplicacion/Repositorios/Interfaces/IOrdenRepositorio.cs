@@ -10,8 +10,9 @@ namespace Capa.Aplicacion.Repositorios.Interfaces
 {
     public interface IOrdenRepositorio
     {
+        Task<IEnumerable<Orden>> GetAllById(string userId);
         Task<Orden> Get(int ordenId);
-        Task Create(Orden orden);
+        Task<Orden> Create(Orden orden);
         Task SaveChangesAsync();
     }
 }

@@ -3,7 +3,10 @@ using Capa.Aplicacion.DTI;
 using Capa.Aplicacion.DTO;
 using Capa.Aplicacion.Servicios.Interfaces;
 using Capa.Datos.Entidades;
+using Capa.Datos.Modelos;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
 
 
 namespace CarritoDeCompras.Controllers
@@ -22,49 +25,59 @@ namespace CarritoDeCompras.Controllers
             _mapper = mapper;
         }
 
-        [HttpGet]
+        [HttpGet("GetAll")]
+        [Authorize]
         public async Task<ActionResult<IEnumerable<CategoriaDTO>>> Get()
         {
+            ApiResponse<IEnumerable<CategoriaDTO>> response;
             try
             {
                 var categorias = await _categoriaService.Get();
-
                 var categoriasDto = _mapper.Map<IEnumerable<CategoriaDTO>>(categorias);
-
-                return Ok(categoriasDto);
+                response = ApiResponse<IEnumerable<CategoriaDTO>>.SuccessResponse(categoriasDto, 200);
+                return Ok(response);
             }
             catch (Exception ex)
             {
-                throw new Exception(ex.Message);
+                response = ApiResponse<IEnumerable<CategoriaDTO>>.ErrorResponse(400, ex.Message);
+                return BadRequest(response);
             }
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("GetOne")]
         public async Task<ActionResult<CategoriaDTO>> Get(int id)
         {
+            ApiResponse<CategoriaDTO> response;
+
             try
             {
-                var categoria = await _categoriaService.GetOne(id);
+                var categoria = await _categoriaService.GetOne(id, "CategoriaId");
 
                 if (categoria == null)
                 {
-                    return NotFound();
+                    response = ApiResponse<CategoriaDTO>.ErrorResponse(404, "No se encuentra la categoria con ese ID");
+                    return NotFound(response);
                 }
 
                 var categoriaDto = _mapper.Map<CategoriaDTO>(categoria);
+                response = ApiResponse<CategoriaDTO>.SuccessResponse(categoriaDto, 200);
 
-                return Ok(categoriaDto);
+                return Ok(response);
             }
             catch (Exception ex)
             {
-                throw new Exception(ex.Message);
+                response = ApiResponse<CategoriaDTO>.ErrorResponse(400, ex.Message);
+                return BadRequest(response);
             }
 
         }
 
-        [HttpPost]
+        [HttpPost("Create")]
+        [Authorize]
         public async Task<IActionResult> Post([FromBody] CategoriaDTO categoria)
         {
+            ApiResponse<CategoriaDTO> response;
+
             try
             {
                 var newCategoria = new Categoria
@@ -73,14 +86,23 @@ namespace CarritoDeCompras.Controllers
                     Nombre = categoria.NombreCategoria,
                 };
 
-                await _categoriaService.Add(newCategoria);
+                var result = await _categoriaService.Add(newCategoria);
 
-                return Ok("Categoria creada correctamente!");
+                if (result != null)
+                {
+                    var categoriaDto = _mapper.Map<CategoriaDTO>(result);
+                    response = ApiResponse<CategoriaDTO>.SuccessResponse(categoriaDto, 201, "Categoria creada correctamente");
+                    return Ok(response);
+                }
+
+                response = ApiResponse<CategoriaDTO>.ErrorResponse(400, "No se pudo crear la categoria correspondiente");
+                return BadRequest(response);
 
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                response = ApiResponse<CategoriaDTO>.ErrorResponse(400, ex.Message);
+                return BadRequest(response);
             }
         }
 
@@ -96,7 +118,7 @@ namespace CarritoDeCompras.Controllers
 
                 try
                 {
-                    var categoriaFind = await _categoriaService.GetOne(id);
+                    var categoriaFind = await _categoriaService.GetOne(id, "CategoriaId");
 
                     if (categoriaFind == null)
                     {
@@ -126,14 +148,14 @@ namespace CarritoDeCompras.Controllers
         {
             try
             {
-                var categoriaFind = await _categoriaService.GetOne(id);
+                var categoriaFind = await _categoriaService.GetOne(id, "CategoriaId");
 
                 if (categoriaFind == null)
                 {
                     return NotFound("No existe una categoria con ese ID");
                 }
 
-                await _categoriaService.Delete(id);
+                await _categoriaService.Delete(id, "CategoriaId");
 
                 return Ok("Categoria eliminada correctamente!");
             }

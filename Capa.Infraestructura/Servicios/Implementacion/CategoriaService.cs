@@ -21,44 +21,57 @@ namespace Capa.Infraestructura.Servicios.Implementacion
             _repositorio = repositorioBase;
         }
 
-        public async Task Add(Categoria categoria)
+        public async Task<Categoria> Add(Categoria categoria)
         {
+            var categorias = await _repositorio.GetAll();
+
+            var categoriaNew = categorias.FirstOrDefault(c => c.Nombre == categoria.Nombre);
+
+            if (categoriaNew != null) throw new Exception("Ya existe una categoria con ese nombre");
+
             categoria.CreatedAt = DateTime.Now;
             categoria.UpdatedAt = DateTime.Now;
-            await _repositorio.Add(categoria);
+            var result = await _repositorio.Add(categoria);
+
+            if (result != null)
+            {
+                return result;
+            }
+
+            return null;
         }
 
-        public async Task Delete(int id)
+        public async Task Delete(int id, string property)
         {
-            await _repositorio.Delete(id);
+            await _repositorio.Delete(id, property);
         }
 
         public async Task Edit(int id, Categoria categoria)
         {
-            var categoriaFind = await _repositorio.GetOne(id);
+            var categoriaFind = await _repositorio.GetOne(id, "CategoriaId");
+
             if (categoriaFind != null)
             {
                 categoriaFind.Nombre = categoria.Nombre;
                 categoriaFind.UpdatedAt = DateTime.Now;
 
                 await _repositorio.Update(categoriaFind);
-            }       
+            }
 
         }
 
         public async Task<IEnumerable<Categoria>> Get(Expression<Func<Categoria, bool>>? filter = null, Expression<Func<Categoria, object>>? includes = null, bool tracked = true)
         {
-            return await _repositorio.GetAll(filter, includes, tracked);
+            var categorias = await _repositorio.GetAll(filter, includes, tracked) ?? throw new Exception("No pudimos recuperar las categorias");
+
+            return categorias;
         }
 
-        public Task<Categoria> GetOne(int id, Expression<Func<Categoria, object>>? includes = null)
+        public Task<Categoria> GetOne(int id, string? property, Expression<Func<Categoria, object>>? includes = null)
         {
-            var categoria = _repositorio.GetOne(id, includes);
-
-            if (categoria == null) return null;
+            var categoria = _repositorio.GetOne(id, property, includes) ?? null;
 
             return categoria;
-
         }
     }
 }
