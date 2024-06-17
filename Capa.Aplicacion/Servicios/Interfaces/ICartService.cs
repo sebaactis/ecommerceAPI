@@ -15,5 +15,6 @@ namespace Capa.Aplicacion.Servicios.Interfaces
         Task<Cart> GetCartById(string userId);
         Task AddProduct(CartItem cartItem, string userId);
         Task RemoveProduct(CartItem cartItem, string userId);
+        Task ResetCart(string userId);
     }
 }

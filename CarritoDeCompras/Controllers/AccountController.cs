@@ -81,7 +81,7 @@ namespace CarritoDeCompras.Controllers
                 issuer: _configuration["Jwt:Issuer"],
                 audience: _configuration["Jwt:Audience"],
                 claims: claims,
-                expires: DateTime.Now.AddMinutes(10),
+                expires: DateTime.Now.AddHours(1),
                 signingCredentials: credentials
                 );
 

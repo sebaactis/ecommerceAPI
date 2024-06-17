@@ -2,6 +2,7 @@
 using Capa.Aplicacion.Repositorios.Interfaces;
 using Capa.Aplicacion.Servicios.Interfaces;
 using Capa.Datos.Entidades;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -34,6 +35,7 @@ namespace Capa.Infraestructura.Servicios.Implementacion
             if (cartExis == null) return;
 
             await _cartRepositorio.AddProduct(cartItem);
+
         }
 
         public async Task createCart(Cart cart)
@@ -69,5 +71,15 @@ namespace Capa.Infraestructura.Servicios.Implementacion
             await _cartRepositorio.RemoveProduct(cartExis.CartId, cartItem);
         }
 
+        public async Task ResetCart(string userId)
+        {
+            var cartExis = await _cartRepositorio.GetCartById(userId);
+
+            if (cartExis == null) return;
+
+            cartExis.CartItems.Clear();
+
+            await _cartRepositorio.ResetCart(cartExis);
+        }
     }
 }

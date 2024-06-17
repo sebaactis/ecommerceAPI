@@ -33,7 +33,7 @@ namespace Capa.Infraestructura.Persistencia
                  .HasMany(c => c.CartItems)
                  .WithOne(ci => ci.Cart)
                  .HasForeignKey(c => c.CartId)
-                 .OnDelete(DeleteBehavior.Restrict);
+                 .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<CartItem>()
                  .HasOne(ci => ci.Producto)

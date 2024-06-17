@@ -85,6 +85,12 @@ namespace Capa.Infraestructura.Repositorio.Implementacion
             await SaveChangesAsync();
         }
 
+        public async Task ResetCart(Cart cart)
+        {
+            dbSetCart.Update(cart);
+            await SaveChangesAsync();
+        }
+
         public async Task SaveChangesAsync()
         {
             await _context.SaveChangesAsync();
