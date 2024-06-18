@@ -3,7 +3,8 @@ using Capa.Aplicacion.DTI;
 using Capa.Aplicacion.DTO;
 using Capa.Aplicacion.Servicios.Interfaces;
 using Capa.Datos.Entidades;
-using Capa.Infraestructura.Servicios.Implementacion;
+using Capa.Datos.Modelos;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 
@@ -23,116 +24,167 @@ namespace CarritoDeCompras.Controllers
             _mapper = mapper;
         }
 
-        [HttpGet]
-        public async Task<IEnumerable<ProductoDTO>> Get()
+        [HttpGet("GetAll")]
+        public async Task<ActionResult<IEnumerable<ProductoDTO>>> Get()
         {
+            ApiResponse<IEnumerable<ProductoDTO>> response;
+
             try
             {
                 var products = await _productService.Get(null, p => p.Categoria, true);
 
-                var productosDto = _mapper.Map<IEnumerable<ProductoDTO>>(products);
+                if (products != null)
+                {
+                    var productosDto = _mapper.Map<IEnumerable<ProductoDTO>>(products);
+                    response = ApiResponse<IEnumerable<ProductoDTO>>.SuccessResponse(productosDto, 200);
+                    return Ok(response);
+                }
 
-                return productosDto;
+                response = ApiResponse<IEnumerable<ProductoDTO>>.ErrorResponse(404, "No se pudieron recuperar los productos");
+                return NotFound(response);
 
             }
             catch (Exception ex)
             {
-                throw new Exception(ex.Message);
+                response = ApiResponse<IEnumerable<ProductoDTO>>.ErrorResponse(400, ex.Message);
+                return BadRequest(response);
             }
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("GetOne")]
         public async Task<ActionResult<ProductoDTO>> Get(int id)
         {
+            ApiResponse<ProductoDTO> response;
+
             try
             {
-                if (id <= 0)
-                {
-                    return BadRequest();
-                }
 
                 var product = await _productService.GetOne(id, "ProductoId", p => p.Categoria);
 
                 if (product != null)
                 {
                     var productoDto = _mapper.Map<ProductoDTO>(product);
-                    return Ok(productoDto);
+                    response = ApiResponse<ProductoDTO>.SuccessResponse(productoDto, 200);
+                    return Ok(response);
                 }
 
-                return NoContent();
+                response = ApiResponse<ProductoDTO>.ErrorResponse(404, "No se pudo recuperar el producto bajo ese ID");
+                return NotFound(response);
 
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                response = ApiResponse<ProductoDTO>.ErrorResponse(400, ex.Message);
+                return BadRequest(response);
             }
         }
 
-        [HttpPost]
+        [HttpPost("Crear")]
+        [Authorize]
         public async Task<IActionResult> Post([FromBody] ProductoDTI producto)
         {
-            var newProducto = _mapper.Map<Producto>(producto);
-            await _productService.Add(newProducto);
 
-            return Ok("Producto creado correctamente!");
-        }
-
-        [HttpPut("{id}")]
-        public async Task<IActionResult> Put(int id, [FromBody] ProductoDTI productoDTI)
-        {
+            ApiResponse<ProductoDTI> response;
             try
             {
-                if (productoDTI == null || id <= 0)
+                var newProducto = _mapper.Map<Producto>(producto);
+
+                var result = await _productService.Add(newProducto);
+
+                if (result != null)
                 {
-                    return BadRequest();
+                    var productoDTO = _mapper.Map<ProductoDTI>(result);
+                    response = ApiResponse<ProductoDTI>.SuccessResponse(productoDTO, 201);
+                    return Ok(response);
                 }
 
+                response = ApiResponse<ProductoDTI>.ErrorResponse(400, "No se pudo crear el producto");
+                return NotFound(response);
+            }
+            catch (Exception ex)
+            {
+                response = ApiResponse<ProductoDTI>.ErrorResponse(400, ex.Message);
+                return BadRequest(response);
+            }
+        }
+
+        [HttpPut("Editar")]
+        [Authorize]
+        public async Task<ActionResult<ProductoDTI>> Put(int id, [FromBody] ProductoDTI productoDTI)
+        {
+            ApiResponse<ProductoDTI> response;
+
+            try
+            {
                 try
                 {
                     var productoFind = await _productService.GetOne(id, "ProductoId");
 
                     if (productoFind == null)
                     {
-                        return NotFound();
+                        response = ApiResponse<ProductoDTI>.ErrorResponse(404, "Producto no encontrado");
+                        return NotFound(response);
                     }
 
                     var producto = _mapper.Map<Producto>(productoDTI);
-                    await _productService.Edit(id, producto);
+                    var result = await _productService.Edit(id, producto);
 
-                    return Ok("Producto editado correctamente");
+                    if (result != null)
+                    {
+                        var productoDTO = _mapper.Map<ProductoDTI>(result);
+                        response = ApiResponse<ProductoDTI>.SuccessResponse(productoDTO, 200);
+                        return Ok(response);
+                    }
+
+                    response = ApiResponse<ProductoDTI>.ErrorResponse(400, "No se pudo editar el producto");
+                    return BadRequest(response);
                 }
 
                 catch (Exception ex)
                 {
-                    return BadRequest(ex.Message);
+                    response = ApiResponse<ProductoDTI>.ErrorResponse(400, ex.Message);
+                    return BadRequest(response);
                 }
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                response = ApiResponse<ProductoDTI>.ErrorResponse(400, ex.Message);
+                return BadRequest(response);
             }
         }
 
-        // DELETE api/<ProductoController>/5
-        [HttpDelete("{id}")]
+        [HttpDelete("Eliminar")]
+        [Authorize]
         public async Task<IActionResult> Delete(int id)
         {
+            ApiResponse<ProductoDTI> response;
+
             try
             {
                 var productoFind = await _productService.GetOne(id, "ProductoId");
 
                 if (productoFind == null)
                 {
-                    return NotFound("No existe un producto con ese id");
+                    response = ApiResponse<ProductoDTI>.ErrorResponse(404, "Producto no encontrado");
+                    return NotFound(response);
                 }
 
-                await _productService.Delete(id, "ProductoId");
+                var result = await _productService.Delete(id, "ProductoId");
 
-                return Ok("Producto eliminado correctamente!");
+                if (result != null)
+                {
+                    var productoDTO = _mapper.Map<ProductoDTI>(result);
+                    response = ApiResponse<ProductoDTI>.SuccessResponse(productoDTO, 200, "Producto eliminado correctamente");
+                    return Ok(response);
+                }
+
+                response = ApiResponse<ProductoDTI>.ErrorResponse(400, "No se pudo eliminar el producto");
+                return BadRequest(response);
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                response = ApiResponse<ProductoDTI>.ErrorResponse(400, ex.Message);
+                return BadRequest(response);
             }
         }
     }

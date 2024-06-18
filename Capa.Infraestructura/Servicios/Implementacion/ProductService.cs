@@ -18,21 +18,36 @@ namespace Capa.Aplicacion.Servicios.Implementacion
         {
             producto.CreatedAt = DateTime.Now;
             producto.UpdatedAt = DateTime.Now;
-            var product = await _repositorio.Add(producto);
-            return product;
+            var result = await _repositorio.Add(producto);
+
+            if (result != null)
+            {
+                return result;
+            }
+
+            return null;
         }
 
-        public async Task Delete(int id, string property)
+        public async Task<Producto> Delete(int id, string property)
         {
             var product = await _repositorio.GetOne(id, property);
 
             if (product != null)
             {
-                await _repositorio.Delete(id, "ProductoId");
+                var result = await _repositorio.Delete(id, "ProductoId");
+
+                if (result != null)
+                {
+                    return result;
+                }
+
+                return null;
             }
+
+            return null;
         }
 
-        public async Task Edit(int id, Producto producto)
+        public async Task<Producto> Edit(int id, Producto producto)
         {
             var productoFind = await _repositorio.GetOne(id, "ProductoId");
             if (productoFind != null)
@@ -44,14 +59,19 @@ namespace Capa.Aplicacion.Servicios.Implementacion
                 productoFind.CategoriaId = producto.CategoriaId;
                 productoFind.UpdatedAt = DateTime.Now;
 
-                await _repositorio.Update(productoFind);
+                return await _repositorio.Update(productoFind);
             }
+
+            return null;
         }
 
         public async Task<IEnumerable<Producto>> Get(Expression<Func<Producto, bool>>? filter = null, Expression<Func<Producto, object>>? includes = null, bool tracked = true)
         {
             var products = await _repositorio.GetAll(filter, includes, tracked);
-            return products;
+
+            if (products != null) return products;
+
+            return null;
         }
 
         public Task<Producto> GetOne(int id, string property, Expression<Func<Producto, object>>? includes = null)

@@ -106,62 +106,86 @@ namespace CarritoDeCompras.Controllers
             }
         }
 
-        [HttpPut("{id}")]
+        [HttpPut("Editar")]
+        [Authorize]
         public async Task<IActionResult> Put(int id, [FromBody] CategoriaDTI categoriaDTI)
         {
+            ApiResponse<CategoriaDTO> response;
+
             try
             {
-                if (categoriaDTI == null || categoriaDTI.NombreCategoria == null || id <= 0)
-                {
-                    return BadRequest();
-                }
-
                 try
                 {
                     var categoriaFind = await _categoriaService.GetOne(id, "CategoriaId");
 
                     if (categoriaFind == null)
                     {
-                        return NotFound();
+                        response = ApiResponse<CategoriaDTO>.ErrorResponse(404, "No se encuentra una categoria con ese ID");
+                        return NotFound(response);
                     }
 
                     var categoria = _mapper.Map<Categoria>(categoriaDTI);
-                    await _categoriaService.Edit(id, categoria);
+                    var result = await _categoriaService.Edit(id, categoria);
 
-                    return Ok("Categoria editada correctamente");
+                    if (result != null)
+                    {
+                        var categoriaDTO = _mapper.Map<CategoriaDTO>(result);
+                        response = ApiResponse<CategoriaDTO>.SuccessResponse(categoriaDTO, 200, "Se modifico la categoria correctamente");
+                        return Ok(response);
+                    }
+
+                    response = ApiResponse<CategoriaDTO>.ErrorResponse(400, "No se pudo editar la categoria");
+                    return BadRequest(response);
                 }
 
                 catch (Exception ex)
                 {
-                    return BadRequest(ex.Message);
+                    response = ApiResponse<CategoriaDTO>.ErrorResponse(400, ex.Message);
+                    return BadRequest(response);
                 }
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                response = ApiResponse<CategoriaDTO>.ErrorResponse(400, ex.Message);
+                return BadRequest(response);
             }
 
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete("Eliminar")]
+        [Authorize]
         public async Task<IActionResult> Delete(int id)
         {
+            ApiResponse<CategoriaDTO> response;
+
             try
             {
                 var categoriaFind = await _categoriaService.GetOne(id, "CategoriaId");
 
                 if (categoriaFind == null)
                 {
-                    return NotFound("No existe una categoria con ese ID");
+                    response = ApiResponse<CategoriaDTO>.ErrorResponse(404, "No se encuentra una categoria con ese ID");
+                    return NotFound(response);
                 }
 
-                await _categoriaService.Delete(id, "CategoriaId");
+                var result = await _categoriaService.Delete(id, "CategoriaId");
 
-                return Ok("Categoria eliminada correctamente!");
+                if(result != null)
+                {
+                    var categoriaDTO = _mapper.Map<CategoriaDTO>(result);
+                    response = ApiResponse<CategoriaDTO>.SuccessResponse(categoriaDTO, 200, "Se elimino la categoria correctamente");
+                    return Ok(response);
+                }
+
+                response = ApiResponse<CategoriaDTO>.ErrorResponse(400, "No se pudo eliminar la categoria");
+                return BadRequest(response);
+
+
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                response = ApiResponse<CategoriaDTO>.ErrorResponse(400, ex.Message);
+                return BadRequest(response);
             }
         }
     }

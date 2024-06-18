@@ -7,8 +7,8 @@ namespace Capa.Infraestructura.Repositorio.Interfaces
         Task<IEnumerable<T>> GetAll(Expression<Func<T, bool>>? filter = null, Expression<Func<T, object>>? includes = null, bool tracked = true);
         Task<T> GetOne(int id, string? property, Expression<Func<T, object>>? includes = null);
         Task<T> Add(T entity);
-        Task Delete(int id, string property);
-        Task Update(T entity);
+        Task<T> Delete(int id, string property);
+        Task<T> Update(T entity);
         Task SaveChangesAsync();
 
     }

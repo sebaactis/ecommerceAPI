@@ -23,22 +23,32 @@ namespace Capa.Infraestructura.Repositorio.Implementacion
 
             if (result.State == EntityState.Added)
             {
+               
                 await SaveChangesAsync();
-                return entity;
+                return result.Entity;
             }
 
             return null;
         }
 
-        public async Task Delete(int id, string property)
+        public async Task<T> Delete(int id, string property)
         {
             var entity = await GetOne(id, property);
 
             if (entity != null)
             {
-                dbSet.Remove(entity);
-                await SaveChangesAsync();
+                var result = dbSet.Remove(entity);
+
+                if (result.State == EntityState.Deleted)
+                {
+                    await SaveChangesAsync();
+                    return entity;
+                }
+
+                return null;    
             }
+
+            return null;
         }
 
         public async Task<IEnumerable<T>> GetAll(Expression<Func<T, bool>>? filter = null, Expression<Func<T, object>>? includes = null, bool tracked = true)
@@ -86,10 +96,17 @@ namespace Capa.Infraestructura.Repositorio.Implementacion
             await _context.SaveChangesAsync();
         }
 
-        public async Task Update(T entity)
+        public async Task<T> Update(T entity)
         {
-            dbSet.Update(entity);
-            await SaveChangesAsync();
+            var result = dbSet.Update(entity);
+
+            if (result.State == EntityState.Modified)
+            {
+                await SaveChangesAsync();
+                return entity;
+            }
+
+            return null;
         }
     }
 }

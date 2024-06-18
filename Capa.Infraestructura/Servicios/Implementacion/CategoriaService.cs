@@ -41,12 +41,19 @@ namespace Capa.Infraestructura.Servicios.Implementacion
             return null;
         }
 
-        public async Task Delete(int id, string property)
+        public async Task<Categoria> Delete(int id, string property)
         {
-            await _repositorio.Delete(id, property);
+            var result = await _repositorio.Delete(id, property);
+
+            if (result != null)
+            {
+                return result;
+            }
+
+            return null;
         }
 
-        public async Task Edit(int id, Categoria categoria)
+        public async Task<Categoria> Edit(int id, Categoria categoria)
         {
             var categoriaFind = await _repositorio.GetOne(id, "CategoriaId");
 
@@ -55,9 +62,13 @@ namespace Capa.Infraestructura.Servicios.Implementacion
                 categoriaFind.Nombre = categoria.Nombre;
                 categoriaFind.UpdatedAt = DateTime.Now;
 
-                await _repositorio.Update(categoriaFind);
-            }
+                var result = await _repositorio.Update(categoriaFind);
 
+                if (result != null) return result;
+
+                return null;
+            }
+            return null;
         }
 
         public async Task<IEnumerable<Categoria>> Get(Expression<Func<Categoria, bool>>? filter = null, Expression<Func<Categoria, object>>? includes = null, bool tracked = true)

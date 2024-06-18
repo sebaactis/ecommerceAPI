@@ -12,7 +12,7 @@ namespace Capa.Aplicacion.Servicios.Interfaces
         Task<IEnumerable<T>> Get(Expression<Func<T, bool>>? filter = null, Expression<Func<T, object>>? includes = null, bool tracked = true);
         Task<T> GetOne(int id, string? property, Expression<Func<T, object>>? includes = null);
         Task<T> Add(T T);
-        Task Edit(int id, T T);
-        Task Delete(int id, string? property);
+        Task<T> Edit(int id, T T);
+        Task<T> Delete(int id, string? property);
     }
 }
