@@ -1,15 +1,6 @@
-﻿using Capa.Aplicacion.DTO;
-using Capa.Aplicacion.Repositorios.Interfaces;
+﻿using Capa.Aplicacion.Repositorios.Interfaces;
 using Capa.Aplicacion.Servicios.Interfaces;
 using Capa.Datos.Entidades;
-using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Capa.Infraestructura.Servicios.Implementacion
 {

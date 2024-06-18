@@ -2,8 +2,6 @@
 using Capa.Datos.Entidades;
 using Capa.Infraestructura.Persistencia;
 using Microsoft.EntityFrameworkCore;
-using System.Linq.Expressions;
-
 
 namespace Capa.Infraestructura.Repositorio.Implementacion
 {

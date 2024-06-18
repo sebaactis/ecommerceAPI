@@ -1,6 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-
 namespace Capa.Datos.Entidades
 {
     public class Producto : ModelBase

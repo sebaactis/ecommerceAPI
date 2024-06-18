@@ -1,5 +1,4 @@
 ﻿using Capa.Datos.Entidades;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 

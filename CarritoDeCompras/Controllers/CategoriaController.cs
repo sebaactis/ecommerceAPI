@@ -6,8 +6,6 @@ using Capa.Datos.Entidades;
 using Capa.Datos.Modelos;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
-
 
 namespace CarritoDeCompras.Controllers
 {

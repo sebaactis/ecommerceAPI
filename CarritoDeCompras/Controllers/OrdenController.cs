@@ -1,8 +1,6 @@
 ﻿using AutoMapper;
-using Azure;
 using Capa.Aplicacion.DTO;
 using Capa.Aplicacion.Servicios.Interfaces;
-using Capa.Datos.Entidades;
 using Capa.Datos.Modelos;
 using Capa.Infraestructura.Servicios.Utilidades;
 using Microsoft.AspNetCore.Authorization;

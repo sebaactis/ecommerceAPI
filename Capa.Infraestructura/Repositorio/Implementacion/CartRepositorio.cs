@@ -4,7 +4,6 @@ using Capa.Datos.Entidades;
 using Capa.Infraestructura.Persistencia;
 using Microsoft.EntityFrameworkCore;
 
-
 namespace Capa.Infraestructura.Repositorio.Implementacion
 {
     public class CartRepositorio : ICartRepositorio

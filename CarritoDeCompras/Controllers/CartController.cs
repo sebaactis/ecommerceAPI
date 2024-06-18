@@ -7,10 +7,6 @@ using Capa.Aplicacion.DTI;
 using Microsoft.AspNetCore.Authorization;
 using Capa.Infraestructura.Servicios.Utilidades;
 using Capa.Datos.Modelos;
-using Azure;
-
-
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace CarritoDeCompras.Controllers
 {

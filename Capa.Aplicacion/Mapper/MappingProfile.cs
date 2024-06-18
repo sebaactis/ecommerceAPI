@@ -3,7 +3,6 @@ using Capa.Aplicacion.DTI;
 using Capa.Aplicacion.DTO;
 using Capa.Datos.Entidades;
 
-
 namespace Capa.Aplicacion.Mapper
 {
     public class MappingProfile : Profile
