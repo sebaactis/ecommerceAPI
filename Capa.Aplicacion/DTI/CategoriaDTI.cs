@@ -1,4 +1,6 @@
-﻿namespace Capa.Aplicacion.DTI
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace Capa.Aplicacion.DTI
 {
     public class CategoriaDTI
     {

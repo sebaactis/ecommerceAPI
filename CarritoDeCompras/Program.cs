@@ -1,5 +1,3 @@
-using Capa.Aplicacion.Mapper;
-using Capa.Aplicacion.Servicios.Interfaces;
 using Capa.Infraestructura;
 using Capa.Infraestructura.Servicios.Utilidades;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -13,7 +11,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+//builder.Services.AddSwaggerGen();
 
 builder.Services.AddRegistroInfra(builder.Configuration);
 
@@ -42,12 +40,11 @@ builder.Services.AddScoped<HttpAccesor>();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+//if (app.Environment.IsDevelopment())
+//{
+//    app.UseSwagger();
+//    app.UseSwaggerUI();
+//}
 
 app.UseHttpsRedirection();
 
