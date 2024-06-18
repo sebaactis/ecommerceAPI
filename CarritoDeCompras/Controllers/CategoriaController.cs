@@ -80,6 +80,13 @@ namespace CarritoDeCompras.Controllers
 
             try
             {
+                if (!ModelState.IsValid)
+                {
+                    var error = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).FirstOrDefault();
+                    response = ApiResponse<CategoriaDTO>.ErrorResponse(400, error);
+                    return BadRequest(response);
+                }
+
                 var newCategoria = new Categoria
                 {
                     CategoriaId = categoria.CategoriaId,
@@ -114,42 +121,40 @@ namespace CarritoDeCompras.Controllers
 
             try
             {
-                try
+                if (!ModelState.IsValid)
                 {
-                    var categoriaFind = await _categoriaService.GetOne(id, "CategoriaId");
-
-                    if (categoriaFind == null)
-                    {
-                        response = ApiResponse<CategoriaDTO>.ErrorResponse(404, "No se encuentra una categoria con ese ID");
-                        return NotFound(response);
-                    }
-
-                    var categoria = _mapper.Map<Categoria>(categoriaDTI);
-                    var result = await _categoriaService.Edit(id, categoria);
-
-                    if (result != null)
-                    {
-                        var categoriaDTO = _mapper.Map<CategoriaDTO>(result);
-                        response = ApiResponse<CategoriaDTO>.SuccessResponse(categoriaDTO, 200, "Se modifico la categoria correctamente");
-                        return Ok(response);
-                    }
-
-                    response = ApiResponse<CategoriaDTO>.ErrorResponse(400, "No se pudo editar la categoria");
+                    var error = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).FirstOrDefault();
+                    response = ApiResponse<CategoriaDTO>.ErrorResponse(400, error);
                     return BadRequest(response);
                 }
 
-                catch (Exception ex)
+                var categoriaFind = await _categoriaService.GetOne(id, "CategoriaId");
+
+                if (categoriaFind == null)
                 {
-                    response = ApiResponse<CategoriaDTO>.ErrorResponse(400, ex.Message);
-                    return BadRequest(response);
+                    response = ApiResponse<CategoriaDTO>.ErrorResponse(404, "No se encuentra una categoria con ese ID");
+                    return NotFound(response);
                 }
+
+                var categoria = _mapper.Map<Categoria>(categoriaDTI);
+                var result = await _categoriaService.Edit(id, categoria);
+
+                if (result != null)
+                {
+                    var categoriaDTO = _mapper.Map<CategoriaDTO>(result);
+                    response = ApiResponse<CategoriaDTO>.SuccessResponse(categoriaDTO, 200, "Se modifico la categoria correctamente");
+                    return Ok(response);
+                }
+
+                response = ApiResponse<CategoriaDTO>.ErrorResponse(400, "No se pudo editar la categoria");
+                return BadRequest(response);
             }
+
             catch (Exception ex)
             {
                 response = ApiResponse<CategoriaDTO>.ErrorResponse(400, ex.Message);
                 return BadRequest(response);
             }
-
         }
 
         [HttpDelete("Eliminar")]
@@ -170,7 +175,7 @@ namespace CarritoDeCompras.Controllers
 
                 var result = await _categoriaService.Delete(id, "CategoriaId");
 
-                if(result != null)
+                if (result != null)
                 {
                     var categoriaDTO = _mapper.Map<CategoriaDTO>(result);
                     response = ApiResponse<CategoriaDTO>.SuccessResponse(categoriaDTO, 200, "Se elimino la categoria correctamente");

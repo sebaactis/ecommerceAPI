@@ -38,15 +38,24 @@ namespace Capa.Infraestructura.Servicios.Implementacion
             {
                 var product = await _productService.GetOne(cartItem.ProductId, "ProductoId");
 
-                OrdenItem ordenItem = new OrdenItem
+                if (product.Stock > 0 && product.Stock >= cartItem.Cantidad)
                 {
-                    ProductoId = cartItem.ProductId,
-                    Cantidad = cartItem.Cantidad,
-                    PrecioUnitario = product.Precio
-                };
+                    OrdenItem ordenItem = new OrdenItem
+                    {
+                        ProductoId = cartItem.ProductId,
+                        Cantidad = cartItem.Cantidad,
+                        PrecioUnitario = product.Precio
+                    };
 
-                orden.OrdenItems.Add(ordenItem);
-                orden.Total += (ordenItem.Cantidad * ordenItem.PrecioUnitario);
+                    product.Stock -= cartItem.Cantidad;
+                    await _productService.Edit(product.ProductoId, product);
+                    orden.OrdenItems.Add(ordenItem);
+                    orden.Total += (ordenItem.Cantidad * ordenItem.PrecioUnitario);
+                }
+                else
+                {
+                    throw new Exception("Unos de los productos supera el stock actual, por favor, verificar");
+                }
             };
 
             await _cartService.ResetCart(cart.UserId);
@@ -70,7 +79,7 @@ namespace Capa.Infraestructura.Servicios.Implementacion
         {
             var result = await _ordenRepositorio.GetAllById(userId);
 
-            if(result != null) return result;
+            if (result != null) return result;
 
             return null;
         }

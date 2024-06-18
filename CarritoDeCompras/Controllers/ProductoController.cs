@@ -87,6 +87,13 @@ namespace CarritoDeCompras.Controllers
             ApiResponse<ProductoDTI> response;
             try
             {
+                if (!ModelState.IsValid)
+                {
+                    var error = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).FirstOrDefault();
+                    response = ApiResponse<ProductoDTI>.ErrorResponse(400, error);
+                    return BadRequest(response);
+                }
+
                 var newProducto = _mapper.Map<Producto>(producto);
 
                 var result = await _productService.Add(newProducto);
@@ -113,44 +120,43 @@ namespace CarritoDeCompras.Controllers
         public async Task<ActionResult<ProductoDTI>> Put(int id, [FromBody] ProductoDTI productoDTI)
         {
             ApiResponse<ProductoDTI> response;
-
             try
             {
-                try
+                if (!ModelState.IsValid)
                 {
-                    var productoFind = await _productService.GetOne(id, "ProductoId");
-
-                    if (productoFind == null)
-                    {
-                        response = ApiResponse<ProductoDTI>.ErrorResponse(404, "Producto no encontrado");
-                        return NotFound(response);
-                    }
-
-                    var producto = _mapper.Map<Producto>(productoDTI);
-                    var result = await _productService.Edit(id, producto);
-
-                    if (result != null)
-                    {
-                        var productoDTO = _mapper.Map<ProductoDTI>(result);
-                        response = ApiResponse<ProductoDTI>.SuccessResponse(productoDTO, 200);
-                        return Ok(response);
-                    }
-
-                    response = ApiResponse<ProductoDTI>.ErrorResponse(400, "No se pudo editar el producto");
+                    var error = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).FirstOrDefault();
+                    response = ApiResponse<ProductoDTI>.ErrorResponse(400, error);
                     return BadRequest(response);
                 }
 
-                catch (Exception ex)
+                var productoFind = await _productService.GetOne(id, "ProductoId");
+
+                if (productoFind == null)
                 {
-                    response = ApiResponse<ProductoDTI>.ErrorResponse(400, ex.Message);
-                    return BadRequest(response);
+                    response = ApiResponse<ProductoDTI>.ErrorResponse(404, "Producto no encontrado");
+                    return NotFound(response);
                 }
+
+                var producto = _mapper.Map<Producto>(productoDTI);
+                var result = await _productService.Edit(id, producto);
+
+                if (result != null)
+                {
+                    var productoDTO = _mapper.Map<ProductoDTI>(result);
+                    response = ApiResponse<ProductoDTI>.SuccessResponse(productoDTO, 200);
+                    return Ok(response);
+                }
+
+                response = ApiResponse<ProductoDTI>.ErrorResponse(400, "No se pudo editar el producto");
+                return BadRequest(response);
             }
+
             catch (Exception ex)
             {
                 response = ApiResponse<ProductoDTI>.ErrorResponse(400, ex.Message);
                 return BadRequest(response);
             }
+
         }
 
         [HttpDelete("Eliminar")]
