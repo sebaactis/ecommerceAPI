@@ -4,6 +4,7 @@ using Capa.Aplicacion.DTO;
 using Capa.Aplicacion.Servicios.Interfaces;
 using Capa.Datos.Entidades;
 using Capa.Datos.Modelos;
+using Capa.Infraestructura.Servicios.Utilidades;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -11,6 +12,7 @@ namespace CarritoDeCompras.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class CategoriaController : ControllerBase
     {
 
@@ -24,12 +26,19 @@ namespace CarritoDeCompras.Controllers
         }
 
         [HttpGet("GetAll")]
-        [Authorize]
         public async Task<ActionResult<IEnumerable<CategoriaDTO>>> Get()
         {
             ApiResponse<IEnumerable<CategoriaDTO>> response;
             try
             {
+                var userId = HttpContext.GetUserIdFromToken();
+
+                if (userId == null)
+                {
+                    response = ApiResponse<IEnumerable<CategoriaDTO>>.ErrorResponse(401, "Usuario no autenticado");
+                    return Unauthorized(response);
+                }
+
                 var categorias = await _categoriaService.Get();
                 var categoriasDto = _mapper.Map<IEnumerable<CategoriaDTO>>(categorias);
                 response = ApiResponse<IEnumerable<CategoriaDTO>>.SuccessResponse(categoriasDto, 200);
@@ -49,6 +58,14 @@ namespace CarritoDeCompras.Controllers
 
             try
             {
+                var userId = HttpContext.GetUserIdFromToken();
+
+                if (userId == null)
+                {
+                    response = ApiResponse<CategoriaDTO>.ErrorResponse(401, "Usuario no autenticado");
+                    return Unauthorized(response);
+                }
+
                 var categoria = await _categoriaService.GetOne(id, "CategoriaId");
 
                 if (categoria == null)
@@ -71,13 +88,20 @@ namespace CarritoDeCompras.Controllers
         }
 
         [HttpPost("Create")]
-        [Authorize]
         public async Task<IActionResult> Post([FromBody] CategoriaDTO categoria)
         {
             ApiResponse<CategoriaDTO> response;
 
             try
             {
+                var userId = HttpContext.GetUserIdFromToken();
+
+                if (userId == null)
+                {
+                    response = ApiResponse<CategoriaDTO>.ErrorResponse(401, "Usuario no autenticado");
+                    return Unauthorized(response);
+                }
+
                 if (!ModelState.IsValid)
                 {
                     var error = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).FirstOrDefault();
@@ -112,13 +136,20 @@ namespace CarritoDeCompras.Controllers
         }
 
         [HttpPut("Editar")]
-        [Authorize]
         public async Task<IActionResult> Put(int id, [FromBody] CategoriaDTI categoriaDTI)
         {
             ApiResponse<CategoriaDTO> response;
 
             try
             {
+                var userId = HttpContext.GetUserIdFromToken();
+
+                if (userId == null)
+                {
+                    response = ApiResponse<CategoriaDTO>.ErrorResponse(401, "Usuario no autenticado");
+                    return Unauthorized(response);
+                }
+
                 if (!ModelState.IsValid)
                 {
                     var error = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).FirstOrDefault();
@@ -156,13 +187,20 @@ namespace CarritoDeCompras.Controllers
         }
 
         [HttpDelete("Eliminar")]
-        [Authorize]
         public async Task<IActionResult> Delete(int id)
         {
             ApiResponse<CategoriaDTO> response;
 
             try
             {
+                var userId = HttpContext.GetUserIdFromToken();
+
+                if (userId == null)
+                {
+                    response = ApiResponse<CategoriaDTO>.ErrorResponse(401, "Usuario no autenticado");
+                    return Unauthorized(response);
+                }
+
                 var categoriaFind = await _categoriaService.GetOne(id, "CategoriaId");
 
                 if (categoriaFind == null)

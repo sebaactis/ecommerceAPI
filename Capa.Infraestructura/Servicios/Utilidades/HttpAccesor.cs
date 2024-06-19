@@ -1,27 +1,31 @@
 ﻿using Microsoft.AspNetCore.Http;
+using System.IdentityModel.Tokens.Jwt;
 
 namespace Capa.Infraestructura.Servicios.Utilidades
 {
-    public class HttpAccesor
-    {
-        private readonly IHttpContextAccessor _contextAccessor;
-
-        public HttpAccesor(IHttpContextAccessor contextAccessor)
+        public static class HttpContextExtensions
         {
-            _contextAccessor = contextAccessor;
-        }
-
-        public string getUserIdToken()
-        {
-            var httpContext = _contextAccessor.HttpContext;
-
-            if (httpContext != null)
+            public static string GetJwtToken(this HttpContext context)
             {
-                var userId = httpContext.User.FindFirst("UserId")?.Value;
-                return userId;
+                var jwtFromCookie  = context.Request.Cookies.TryGetValue("JWT", out string token);
+
+                if(!jwtFromCookie) return null;
+
+                return token;
             }
 
-            return null;
+            public static string GetUserIdFromToken(this HttpContext context)
+            {
+                 var token = context.GetJwtToken();
+                if (string.IsNullOrEmpty(token))
+                {
+                    return null;
+                }
+
+                var tokenHandler = new JwtSecurityTokenHandler();
+                var jwtToken = tokenHandler.ReadJwtToken(token);
+                var userIdClaim = jwtToken.Claims.FirstOrDefault(c => c.Type == "UserId");
+                return userIdClaim?.Value;
+            }
         }
     }
-}

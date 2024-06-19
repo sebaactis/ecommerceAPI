@@ -1,5 +1,7 @@
 ﻿using Capa.Datos.Entidades;
 using Capa.Datos.Modelos;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
@@ -56,12 +58,23 @@ namespace CarritoDeCompras.Controllers
             if (user != null && await _userManager.CheckPasswordAsync(user, model.Password))
             {
                 var token = GenerateJwtToken(user.UserName, user.Id);
+
+                var cookieClaims = new List<Claim>
+                {
+                    new Claim("JWT", token)
+                };
+
+                var claimsIdentity = new ClaimsIdentity(cookieClaims, CookieAuthenticationDefaults.AuthenticationScheme);
+
+                await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity));
+
+                Response.Cookies.Append("JWT", token);
+
                 return Ok(new { Token = token });
             }
 
             return Unauthorized();
-        }       
-
+        }
         private string GenerateJwtToken(string username, string id)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
@@ -79,11 +92,11 @@ namespace CarritoDeCompras.Controllers
                 issuer: _configuration["Jwt:Issuer"],
                 audience: _configuration["Jwt:Audience"],
                 claims: claims,
-                expires: DateTime.Now.AddHours(1),
+                expires: DateTime.Now.AddMinutes(15),
                 signingCredentials: credentials
                 );
 
-            return tokenHandler.WriteToken(token);    
+            return tokenHandler.WriteToken(token);
         }
     }
 }

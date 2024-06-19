@@ -12,33 +12,31 @@ namespace CarritoDeCompras.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class CartController : ControllerBase
     {
         private readonly ICartService _cartService;
         private readonly IMapper _mapper;
-        private readonly HttpAccesor _httpAccesor;
 
-        public CartController(ICartService cartService, IMapper mapper, HttpAccesor httpAccesor)
+        public CartController(ICartService cartService, IMapper mapper)
         {
             _cartService = cartService;
             _mapper = mapper;
-            _httpAccesor = httpAccesor;
         }
 
         [HttpGet("getCart")]
-        [Authorize]
         public async Task<ActionResult<CartDTO>> Get()
         {
             ApiResponse<CartDTO> response;
 
             try
             {
-                var userId = _httpAccesor.getUserIdToken();
+                var userId = HttpContext.GetUserIdFromToken();
 
                 if (userId == null)
                 {
-                    response = ApiResponse<CartDTO>.ErrorResponse(404, "Usuario no encontrado");
-                    return NotFound(response);
+                    response = ApiResponse<CartDTO>.ErrorResponse(401, "Usuario no autenticado");
+                    return Unauthorized(response);
                 }
 
                 var cart = await _cartService.GetCartById(userId);
@@ -62,14 +60,13 @@ namespace CarritoDeCompras.Controllers
         }
 
         [HttpPost("newCart")]
-        [Authorize]
         public async Task<IActionResult> Create()
         {
             ApiResponse<Cart> response;
 
             try
             {
-                var userId = _httpAccesor.getUserIdToken();
+                var userId = HttpContext.GetUserIdFromToken();
 
                 if (userId == null)
                 {
@@ -94,14 +91,13 @@ namespace CarritoDeCompras.Controllers
         }
 
         [HttpPost("addProduct")]
-        [Authorize]
         public async Task<IActionResult> Add([FromBody] CartItemDTI cartItem)
         {
             ApiResponse<CartItemDTI> response;
 
             try
             {
-                var userId = _httpAccesor.getUserIdToken();
+                var userId = HttpContext.GetUserIdFromToken();
 
                 if (userId == null)
                 {
@@ -141,14 +137,13 @@ namespace CarritoDeCompras.Controllers
         }
 
         [HttpPost("resetCart")]
-        [Authorize]
         public async Task<IActionResult> ResetCart()
         {
             ApiResponse<string> response;
 
             try
             {
-                var userId = _httpAccesor.getUserIdToken();
+                var userId = HttpContext.GetUserIdFromToken();
 
                 if (userId == null)
                 {
@@ -169,14 +164,13 @@ namespace CarritoDeCompras.Controllers
         }
 
         [HttpDelete("deleteProduct")]
-        [Authorize]
         public async Task<IActionResult> Delete(int cartId, [FromBody] CartItemDTI cartItemDTI)
         {
             ApiResponse<CartItemDTI> response;
 
             try
             {
-                var userId = _httpAccesor.getUserIdToken();
+                var userId = HttpContext.GetUserIdFromToken();
 
                 if (userId == null)
                 {
