@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
+using System.Net;
 using System.Security.Claims;
 using System.Text;
 
@@ -28,57 +29,84 @@ namespace CarritoDeCompras.Controllers
         [Route("Register")]
         public async Task<IActionResult> Register(RegisterModel model)
         {
-            if (!ModelState.IsValid)
+            ApiResponse<string> response;
+
+            try
             {
-                return BadRequest(ModelState);
+                if (!ModelState.IsValid)
+                {
+                    response = ApiResponse<string>.ErrorResponse(400, ModelState.ToString());
+                    return BadRequest(response);
+                }
+
+                var user = new User
+                {
+                    UserName = model.Username,
+                    Email = model.Email,
+                };
+
+                var result = await _userManager.CreateAsync(user, model.Password);
+
+                if (result.Succeeded)
+                {
+                    response = ApiResponse<string>.SuccessResponse("Registrado correctamente!", 200);
+                    return Ok(response);
+                }
+
+                response = ApiResponse<string>.ErrorResponse(400, "Ocurrio un error al intentar registrarse");
+                return BadRequest(response);
             }
-
-            var user = new User
+            catch (Exception ex)
             {
-                UserName = model.Username,
-                Email = model.Email,
-            };
-
-            var result = await _userManager.CreateAsync(user, model.Password);
-
-            if (result.Succeeded)
-            {
-                return Ok("Usuario creado correctamente");
+                response = ApiResponse<string>.ErrorResponse(500, ex.Message);
+                return BadRequest(response);
             }
-
-            return BadRequest();
         }
 
         [HttpPost]
         [Route("Login")]
         public async Task<IActionResult> Login(LoginModel model)
         {
-            var user = await _userManager.FindByNameAsync(model.Username);
+            ApiResponse<string> response;
 
-            if (user != null && await _userManager.CheckPasswordAsync(user, model.Password))
+            try
             {
-                var token = GenerateJwtToken(user.UserName, user.Id);
+                var user = await _userManager.FindByNameAsync(model.Username);
 
-                var cookieClaims = new List<Claim>
+                if (user != null && await _userManager.CheckPasswordAsync(user, model.Password))
                 {
-                    new Claim("JWT", token)
-                };
+                    var token = GenerateJwtToken(user.UserName, user.Id);
 
-                var claimsIdentity = new ClaimsIdentity(cookieClaims, CookieAuthenticationDefaults.AuthenticationScheme);
+                    var cookieClaims = new List<Claim>
+                       {
+                         new Claim("JWT", token)
+                       };
 
-                await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity));
+                    var claimsIdentity = new ClaimsIdentity(cookieClaims, CookieAuthenticationDefaults.AuthenticationScheme);
 
-                Response.Cookies.Append("JWT", token);
+                    await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity));
 
-                return Ok(new { Token = token });
+                    Response.Cookies.Append("JWT", token);
+
+                    response = ApiResponse<string>.SuccessResponse("Logueado correctamente!", 200);
+
+                    return Ok(response);
+                }
+
+                response = ApiResponse<string>.ErrorResponse(400, "Error al intentar loguearse");
+                return Unauthorized(response);
+
             }
-
-            return Unauthorized();
+            catch (Exception ex)
+            {
+                response = ApiResponse<string>.ErrorResponse(500, ex.Message);
+                return BadRequest(response);
+            }
         }
+
         private string GenerateJwtToken(string username, string id)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
-
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
             var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
 

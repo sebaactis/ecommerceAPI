@@ -20,7 +20,7 @@
             return new ApiResponse<T>(true, statusCode, payload, message);
         }
 
-        public static ApiResponse<T> ErrorResponse(int statusCode, string message)
+        public static ApiResponse<T> ErrorResponse(int statusCode, string message, IEnumerable<string>? errorMessages = null)
         {
             return new ApiResponse<T>(false, statusCode, default(T), message);
         }
