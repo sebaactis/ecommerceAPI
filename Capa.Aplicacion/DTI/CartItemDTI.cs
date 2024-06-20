@@ -2,7 +2,7 @@
 {
     public class CartItemDTI
     {
-        public int ProductId { get; set; }
+        public Guid ProductId { get; set; }
         public int Cantidad { get; set; }
     }
 }

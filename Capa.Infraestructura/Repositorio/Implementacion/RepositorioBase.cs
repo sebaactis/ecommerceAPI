@@ -31,7 +31,7 @@ namespace Capa.Infraestructura.Repositorio.Implementacion
             return null;
         }
 
-        public async Task<T> Delete(int id, string property)
+        public async Task<T> Delete(Guid id, string property)
         {
             var entity = await GetOne(id, property);
 
@@ -73,7 +73,7 @@ namespace Capa.Infraestructura.Repositorio.Implementacion
             return await query.ToListAsync();
         }
 
-        public async Task<T> GetOne(int id, string? property, Expression<Func<T, object>>? includes = null)
+        public async Task<T> GetOne(Guid id, string? property, Expression<Func<T, object>>? includes = null)
         {
             IQueryable<T> query = dbSet;
 
@@ -84,7 +84,7 @@ namespace Capa.Infraestructura.Repositorio.Implementacion
 
             if (property != null)
             {
-                var entity = await query.FirstOrDefaultAsync(e => EF.Property<int>(e, property) == id);
+                var entity = await query.FirstOrDefaultAsync(e => EF.Property<Guid>(e, property) == id);
 
                 if (entity != null) return entity;
             }

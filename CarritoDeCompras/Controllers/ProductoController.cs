@@ -53,7 +53,7 @@ namespace CarritoDeCompras.Controllers
         }
 
         [HttpGet("GetOne")]
-        public async Task<ActionResult<ProductoDTO>> Get(int id)
+        public async Task<ActionResult<ProductoDTO>> Get(Guid id)
         {
             ApiResponse<ProductoDTO> response;
 
@@ -126,7 +126,7 @@ namespace CarritoDeCompras.Controllers
 
         [HttpPut("Editar")]
         [Authorize]
-        public async Task<ActionResult<ProductoDTI>> Put(int id, [FromBody] ProductoDTI productoDTI)
+        public async Task<ActionResult<ProductoDTI>> Put(Guid id, [FromBody] ProductoDTI productoDTI)
         {
             ApiResponse<ProductoDTI> response;
             try
@@ -178,7 +178,7 @@ namespace CarritoDeCompras.Controllers
 
         [HttpDelete("Eliminar")]
         [Authorize]
-        public async Task<IActionResult> Delete(int id)
+        public async Task<IActionResult> Delete(Guid id)
         {
             ApiResponse<ProductoDTI> response;
 

@@ -2,6 +2,7 @@
 using Capa.Datos.Modelos;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
@@ -100,6 +101,32 @@ namespace CarritoDeCompras.Controllers
             catch (Exception ex)
             {
                 response = ApiResponse<string>.ErrorResponse(500, ex.Message);
+                return BadRequest(response);
+            }
+        }
+
+        [HttpPost("Logout")]
+        [Authorize]
+        public async Task<IActionResult> Logout()
+        {
+
+            ApiResponse<string> response;
+
+            try
+            {
+                foreach (var cookie in Request.Cookies.Keys)
+                {
+                    Response.Cookies.Delete(cookie);
+
+                }
+
+                response = ApiResponse<string>.SuccessResponse("Logout exitoso", 200);
+                return Ok(response);
+
+            }
+            catch (Exception ex)
+            {
+                response = ApiResponse<string>.ErrorResponse(400, ex.Message);
                 return BadRequest(response);
             }
         }

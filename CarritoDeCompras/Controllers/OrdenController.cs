@@ -24,7 +24,7 @@ namespace CarritoDeCompras.Controllers
         }
 
         [HttpPost("AddOrden")]
-        public async Task<IActionResult> CreateOrden(int cartId)
+        public async Task<IActionResult> CreateOrden()
         {
             ApiResponse<OrdenDTO> response;
             try
@@ -50,7 +50,7 @@ namespace CarritoDeCompras.Controllers
         }
 
         [HttpGet("GetOrden")]
-        public async Task<ActionResult<OrdenDTO>> GetOrden(int ordenId)
+        public async Task<ActionResult<OrdenDTO>> GetOrden(Guid ordenId)
         {
             ApiResponse<OrdenDTO> response;
 

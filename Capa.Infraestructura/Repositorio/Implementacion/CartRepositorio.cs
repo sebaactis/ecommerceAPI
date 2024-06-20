@@ -57,7 +57,7 @@ namespace Capa.Infraestructura.Repositorio.Implementacion
             return null;
         }
 
-        public async Task RemoveProduct(int cartId, CartItem cartItem)
+        public async Task RemoveProduct(Guid cartId, CartItem cartItem)
         {
             var existingCart = await dbSetCart.Include(c => c.CartItems)
                                   .FirstOrDefaultAsync(c => c.CartId == cartId);

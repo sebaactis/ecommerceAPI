@@ -30,7 +30,7 @@ namespace Capa.Infraestructura.Repositorio.Implementacion
             return null;
         }
 
-        public async Task<Orden> Get(int ordenId)
+        public async Task<Orden> Get(Guid ordenId)
         {
 
             var orden = await dbSet.Include(o => o.User).Include(o => o.OrdenItems).ThenInclude(oi => oi.Producto).ThenInclude(p => p.Categoria).FirstOrDefaultAsync(o => o.OrdenId == ordenId);

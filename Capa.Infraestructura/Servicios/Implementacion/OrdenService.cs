@@ -66,7 +66,7 @@ namespace Capa.Infraestructura.Servicios.Implementacion
             throw new Exception("Ocurrió un error al intentar crear su orden, intente de nuevo más tardes");
         }
 
-        public async Task<Orden> Get(int ordenId)
+        public async Task<Orden> Get(Guid ordenId)
         {
             var orden = await _ordenRepositorio.Get(ordenId);
 

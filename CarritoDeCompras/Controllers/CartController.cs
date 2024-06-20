@@ -62,7 +62,7 @@ namespace CarritoDeCompras.Controllers
         [HttpPost("newCart")]
         public async Task<IActionResult> Create()
         {
-            ApiResponse<Cart> response;
+            ApiResponse<CartCreateDTO> response;
 
             try
             {
@@ -70,22 +70,24 @@ namespace CarritoDeCompras.Controllers
 
                 if (userId == null)
                 {
-                    response = ApiResponse<Cart>.ErrorResponse(404, "Usuario no encontrado");
+                    response = ApiResponse<CartCreateDTO>.ErrorResponse(404, "Usuario no encontrado");
                     return NotFound(response);
                 }
 
                 var cart = new Cart();
                 cart.UserId = userId;
+                cart.CartId = Guid.NewGuid();
 
                 await _cartService.createCart(cart);
 
-                response = ApiResponse<Cart>.SuccessResponse(cart, 201, "Carrito creado correctamente!");
+                var cartDto = _mapper.Map<CartCreateDTO>(cart);
+                response = ApiResponse<CartCreateDTO>.SuccessResponse(cartDto, 201, "Carrito creado correctamente!");
                 return Ok(response);
             }
 
             catch (Exception ex)
             {
-                response = ApiResponse<Cart>.ErrorResponse(500, ex.Message);
+                response = ApiResponse<CartCreateDTO>.ErrorResponse(500, ex.Message);
                 return BadRequest(response);
             }
         }

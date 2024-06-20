@@ -2,7 +2,7 @@
 {
     public class Orden
     {
-        public int OrdenId { get; set; }
+        public Guid OrdenId { get; set; }
         public DateTime OrdenDate { get; set; }
         public string UserId { get; set; }
         public User User { get; set; }

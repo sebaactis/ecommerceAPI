@@ -52,7 +52,7 @@ namespace CarritoDeCompras.Controllers
         }
 
         [HttpGet("GetOne")]
-        public async Task<ActionResult<CategoriaDTO>> Get(int id)
+        public async Task<ActionResult<CategoriaDTO>> Get(Guid id)
         {
             ApiResponse<CategoriaDTO> response;
 
@@ -136,7 +136,7 @@ namespace CarritoDeCompras.Controllers
         }
 
         [HttpPut("Editar")]
-        public async Task<IActionResult> Put(int id, [FromBody] CategoriaDTI categoriaDTI)
+        public async Task<IActionResult> Put(Guid id, [FromBody] CategoriaDTI categoriaDTI)
         {
             ApiResponse<CategoriaDTO> response;
 
@@ -187,7 +187,7 @@ namespace CarritoDeCompras.Controllers
         }
 
         [HttpDelete("Eliminar")]
-        public async Task<IActionResult> Delete(int id)
+        public async Task<IActionResult> Delete(Guid id)
         {
             ApiResponse<CategoriaDTO> response;
 

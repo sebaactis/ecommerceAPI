@@ -35,7 +35,7 @@ namespace Capa.Infraestructura.Servicios.Implementacion
             return null;
         }
 
-        public async Task<Categoria> Delete(int id, string property)
+        public async Task<Categoria> Delete(Guid id, string property)
         {
             var result = await _repositorio.Delete(id, property);
 
@@ -47,7 +47,7 @@ namespace Capa.Infraestructura.Servicios.Implementacion
             return null;
         }
 
-        public async Task<Categoria> Edit(int id, Categoria categoria)
+        public async Task<Categoria> Edit(Guid id, Categoria categoria)
         {
             var categoriaFind = await _repositorio.GetOne(id, "CategoriaId");
 
@@ -72,7 +72,7 @@ namespace Capa.Infraestructura.Servicios.Implementacion
             return categorias;
         }
 
-        public Task<Categoria> GetOne(int id, string? property, Expression<Func<Categoria, object>>? includes = null)
+        public Task<Categoria> GetOne(Guid id, string? property, Expression<Func<Categoria, object>>? includes = null)
         {
             var categoria = _repositorio.GetOne(id, property, includes) ?? null;
 

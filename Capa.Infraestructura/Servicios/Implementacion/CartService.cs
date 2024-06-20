@@ -26,7 +26,9 @@ namespace Capa.Infraestructura.Servicios.Implementacion
 
         public async Task createCart(Cart cart)
         {
-            var cartExist = await _cartRepositorio.GetCartById(cart.UserId) ?? throw new Exception("Ya existe un carrito activo para este usuario");
+            var cartExist = await _cartRepositorio.GetCartById(cart.UserId);
+
+            if (cartExist != null) throw new Exception("Ya existe un carrito activo para este usuario");
 
             cart.CreatedAt = DateTime.Now;
             cart.UpdatedAt = DateTime.Now;

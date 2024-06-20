@@ -19,9 +19,6 @@ namespace Capa.Aplicacion.DTI
         [Required(ErrorMessage = "El stock es obligatorio")]
         [Range(1, int.MaxValue, ErrorMessage = "El stock debe ser minimo 1")]
         public int Stock { get; set; }
-
-        [Required(ErrorMessage = "El ID de la categoria es obligatoria")]
-        [Range(1, int.MaxValue, ErrorMessage = "El ID de la categoria debe ser minimo 1")]
-        public int CategoriaId { get; set; }
+        public Guid CategoriaId { get; set; }
     }
 }

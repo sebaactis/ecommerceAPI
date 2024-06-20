@@ -24,11 +24,9 @@ namespace CarritoDeCompras.Migrations
 
             modelBuilder.Entity("Capa.Datos.Entidades.Cart", b =>
                 {
-                    b.Property<int>("CartId")
+                    b.Property<Guid>("CartId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CartId"));
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -58,11 +56,11 @@ namespace CarritoDeCompras.Migrations
                     b.Property<int>("Cantidad")
                         .HasColumnType("int");
 
-                    b.Property<int>("CartId")
-                        .HasColumnType("int");
+                    b.Property<Guid>("CartId")
+                        .HasColumnType("uniqueidentifier");
 
-                    b.Property<int>("ProductId")
-                        .HasColumnType("int");
+                    b.Property<Guid>("ProductId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.HasKey("CartItemId");
 
@@ -75,11 +73,9 @@ namespace CarritoDeCompras.Migrations
 
             modelBuilder.Entity("Capa.Datos.Entidades.Categoria", b =>
                 {
-                    b.Property<int>("CategoriaId")
+                    b.Property<Guid>("CategoriaId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CategoriaId"));
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -99,11 +95,9 @@ namespace CarritoDeCompras.Migrations
 
             modelBuilder.Entity("Capa.Datos.Entidades.Orden", b =>
                 {
-                    b.Property<int>("OrdenId")
+                    b.Property<Guid>("OrdenId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("OrdenId"));
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("OrdenDate")
                         .HasColumnType("datetime2");
@@ -133,14 +127,14 @@ namespace CarritoDeCompras.Migrations
                     b.Property<int>("Cantidad")
                         .HasColumnType("int");
 
-                    b.Property<int>("OrdenId")
-                        .HasColumnType("int");
+                    b.Property<Guid>("OrdenId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<decimal>("PrecioUnitario")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<int>("ProductoId")
-                        .HasColumnType("int");
+                    b.Property<Guid>("ProductoId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.HasKey("OrdenItemId");
 
@@ -153,14 +147,12 @@ namespace CarritoDeCompras.Migrations
 
             modelBuilder.Entity("Capa.Datos.Entidades.Producto", b =>
                 {
-                    b.Property<int>("ProductoId")
+                    b.Property<Guid>("ProductoId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("uniqueidentifier");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ProductoId"));
-
-                    b.Property<int>("CategoriaId")
-                        .HasColumnType("int");
+                    b.Property<Guid>("CategoriaId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");

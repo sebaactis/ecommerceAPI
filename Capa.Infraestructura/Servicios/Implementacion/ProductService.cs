@@ -28,7 +28,7 @@ namespace Capa.Aplicacion.Servicios.Implementacion
             return null;
         }
 
-        public async Task<Producto> Delete(int id, string property)
+        public async Task<Producto> Delete(Guid id, string property)
         {
             var product = await _repositorio.GetOne(id, property);
 
@@ -47,7 +47,7 @@ namespace Capa.Aplicacion.Servicios.Implementacion
             return null;
         }
 
-        public async Task<Producto> Edit(int id, Producto producto)
+        public async Task<Producto> Edit(Guid id, Producto producto)
         {
             var productoFind = await _repositorio.GetOne(id, "ProductoId");
             if (productoFind != null)
@@ -74,7 +74,7 @@ namespace Capa.Aplicacion.Servicios.Implementacion
             return null;
         }
 
-        public Task<Producto> GetOne(int id, string property, Expression<Func<Producto, object>>? includes = null)
+        public Task<Producto> GetOne(Guid id, string property, Expression<Func<Producto, object>>? includes = null)
         {
             var product = _repositorio.GetOne(id, property, includes);
 

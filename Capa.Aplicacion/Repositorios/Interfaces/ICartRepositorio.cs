@@ -7,7 +7,7 @@ namespace Capa.Aplicacion.Repositorios.Interfaces
         Task createCart(Cart cart);
         Task<Cart> GetCartById(string userId);
         Task AddProduct(CartItem cartItem);
-        Task RemoveProduct(int cartId, CartItem cartItem);
+        Task RemoveProduct(Guid cartId, CartItem cartItem);
         Task ResetCart(Cart cart);
         Task SaveChangesAsync();
     }

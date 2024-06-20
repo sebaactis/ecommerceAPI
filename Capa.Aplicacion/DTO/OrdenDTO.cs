@@ -2,7 +2,7 @@
 {
     public class OrdenDTO
     {
-        public int OrdenId { get; set; }
+        public Guid OrdenId { get; set; }
         public decimal Total { get; set; }
         public string UserId { get; set; }
         public UserDTO User { get; set; }

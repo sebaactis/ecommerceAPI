@@ -4,7 +4,7 @@ namespace Capa.Datos.Entidades
 {
     public class Producto : ModelBase
     {
-        public int ProductoId { get; set; }
+        public Guid ProductoId { get; set; }
 
         [Required(ErrorMessage = "El nombre del producto es obligatorio.")]
         [StringLength(25, MinimumLength = 4, ErrorMessage = "El nombre del producto debe tener minimo 4 caracteres y maximo 25 caracteres.")]
@@ -21,10 +21,7 @@ namespace Capa.Datos.Entidades
         [Required(ErrorMessage = "El stock es obligatorio")]
         [Range(1, int.MaxValue, ErrorMessage = "El stock debe ser minimo 1")]
         public int Stock { get; set; }
-
-        [Required(ErrorMessage = "El ID de la categoria es obligatoria")]
-        [Range(1, int.MaxValue, ErrorMessage = "El ID de la categoria debe ser minimo 1")]
-        public int CategoriaId { get; set; }
+        public Guid CategoriaId { get; set; }
         public Categoria Categoria { get; set; }
         public ICollection<CartItem> CartItems { get; set; }
         public ICollection<OrdenItem> OrdenItems { get; set; }
