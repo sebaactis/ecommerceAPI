@@ -18,12 +18,14 @@ namespace CarritoDeCompras.Controllers
     public class AccountController : ControllerBase
     {
         private readonly UserManager<User> _userManager;
+        private readonly RoleManager<IdentityRole> _roleManager;
         private readonly IConfiguration _configuration;
 
-        public AccountController(UserManager<User> userManager, IConfiguration configuration)
+        public AccountController(UserManager<User> userManager, RoleManager<IdentityRole> roleManager, IConfiguration configuration)
         {
             _userManager = userManager;
             _configuration = configuration;
+            _roleManager = roleManager;
         }
 
         [HttpPost]
@@ -50,8 +52,24 @@ namespace CarritoDeCompras.Controllers
 
                 if (result.Succeeded)
                 {
-                    response = ApiResponse<string>.SuccessResponse("Registrado correctamente!", 200);
-                    return Ok(response);
+                    var role = await _roleManager.FindByNameAsync("Usuario");
+
+                    if(role != null)
+                    {
+                        var roleAssing = await _userManager.AddToRoleAsync(user, "Usuario");
+
+                        if (roleAssing.Succeeded)
+                        {
+                            response = ApiResponse<string>.SuccessResponse("Registrado correctamente!", 200);
+                            return Ok(response);
+                        }
+
+                        response = ApiResponse<string>.ErrorResponse(400, "Ocurrio un error al intentar asignar el rol por defecto");
+                        return BadRequest(response);
+                    }
+
+                    response = ApiResponse<string>.ErrorResponse(400, "Ocurrio un error al intentar registrarse");
+                    return BadRequest(response);
                 }
 
                 response = ApiResponse<string>.ErrorResponse(400, "Ocurrio un error al intentar registrarse");
@@ -76,7 +94,8 @@ namespace CarritoDeCompras.Controllers
 
                 if (user != null && await _userManager.CheckPasswordAsync(user, model.Password))
                 {
-                    var token = GenerateJwtToken(user.UserName, user.Id);
+                    var userRole = await _userManager.GetRolesAsync(user);
+                    var token = GenerateJwtToken(user.UserName, user.Id, userRole.FirstOrDefault());
 
                     var cookieClaims = new List<Claim>
                        {
@@ -87,7 +106,13 @@ namespace CarritoDeCompras.Controllers
 
                     await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity));
 
-                    Response.Cookies.Append("JWT", token);
+                    Response.Cookies.Append("JWT", token, new CookieOptions
+                    {
+                        HttpOnly = true,
+                        Secure = true,
+                        SameSite = SameSiteMode.Strict,
+                        Expires = DateTime.UtcNow.AddMinutes(15)
+                    });
 
                     response = ApiResponse<string>.SuccessResponse("Logueado correctamente!", 200);
 
@@ -131,7 +156,7 @@ namespace CarritoDeCompras.Controllers
             }
         }
 
-        private string GenerateJwtToken(string username, string id)
+        private string GenerateJwtToken(string username, string id, string userRole)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
@@ -139,8 +164,9 @@ namespace CarritoDeCompras.Controllers
 
             var claims = new[]
             {
-                new Claim(ClaimTypes.Name, username),
-                new Claim("UserId", id)
+                new Claim("Username", username),
+                new Claim("UserId", id),
+                new Claim(ClaimTypes.Role, userRole)
             };
 
             var token = new JwtSecurityToken(

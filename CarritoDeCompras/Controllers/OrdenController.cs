@@ -5,7 +5,6 @@ using Capa.Datos.Modelos;
 using Capa.Infraestructura.Servicios.Utilidades;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
 
 namespace CarritoDeCompras.Controllers
 {

@@ -7,7 +7,6 @@ using Capa.Infraestructura.Persistencia;
 using Capa.Infraestructura.Repositorio.Implementacion;
 using Capa.Infraestructura.Repositorio.Interfaces;
 using Capa.Infraestructura.Servicios.Implementacion;
-using Capa.Infraestructura.Servicios.Utilidades;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Http;
@@ -17,7 +16,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
-
 
 
 namespace Capa.Infraestructura
@@ -44,21 +42,7 @@ namespace Capa.Infraestructura
 
             services.ConfigureApplicationCookie(options =>
             {
-                options.Cookie.HttpOnly = true;
-                options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
-                options.Cookie.SameSite = SameSiteMode.Strict;
-                options.LoginPath = "/Account/Login";
-                options.ExpireTimeSpan = TimeSpan.FromMinutes(15);
-            });
-
-            services.AddAuthentication(option =>
-            {
-                option.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-                option.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-                option.DefaultChallengeScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-            })
-            .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, options =>
-            {
+                options.Cookie.Name = "JWT";
                 options.Cookie.HttpOnly = true;
                 options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
                 options.Cookie.SameSite = SameSiteMode.Strict;
@@ -66,17 +50,56 @@ namespace Capa.Infraestructura
                 options.ExpireTimeSpan = TimeSpan.FromMinutes(15);
                 options.Events = new CookieAuthenticationEvents
                 {
-                    OnRedirectToLogin = ctx =>
+                    OnRedirectToLogin = context =>
                     {
-                        if (ctx.Request.Path.StartsWithSegments("/api") &&
-                            ctx.Response.StatusCode == StatusCodes.Status200OK)
+                        if (context.Request.Path.StartsWithSegments("/api") &&
+                            context.Response.StatusCode == StatusCodes.Status200OK)
                         {
-                            ctx.Response.StatusCode = StatusCodes.Status401Unauthorized;
-                            ctx.Response.WriteAsync("Usuario no autenticado").Wait();
+                            context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+                            context.Response.WriteAsync("Usuario no autenticado").Wait();
                         }
                         else
                         {
-                            ctx.Response.Redirect(ctx.RedirectUri);
+                            context.Response.Redirect(context.RedirectUri);
+                        }
+                        return Task.CompletedTask;
+                    },
+                    OnRedirectToAccessDenied = context =>
+                    {
+                        context.Response.StatusCode = StatusCodes.Status403Forbidden;
+                        context.Response.WriteAsync("Usuario no autorizado").Wait();
+                        return Task.CompletedTask;
+                    }
+                };
+            });
+
+            services.AddAuthentication(option =>
+            {
+                option.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                option.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                option.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+            .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, options =>
+            {
+                options.Cookie.Name = "JWT";
+                options.Cookie.HttpOnly = true;
+                options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+                options.Cookie.SameSite = SameSiteMode.Strict;
+                options.LoginPath = "/Account/Login";
+                options.ExpireTimeSpan = TimeSpan.FromMinutes(15);
+                options.Events = new CookieAuthenticationEvents
+                {
+                    OnRedirectToLogin = context =>
+                    {
+                        if (context.Request.Path.StartsWithSegments("/api") &&
+                            context.Response.StatusCode == StatusCodes.Status200OK)
+                        {
+                            context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+                            context.Response.WriteAsync("Usuario no autenticado").Wait();
+                        }
+                        else
+                        {
+                            context.Response.Redirect(context.RedirectUri);
                         }
                         return Task.CompletedTask;
                     }
@@ -93,9 +116,33 @@ namespace Capa.Infraestructura
                         ValidIssuer = configuration["Jwt:Issuer"],
                         ValidAudience = configuration["Jwt:Audience"],
                         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Jwt:Key"]))
+
+                    };
+                    options.Events = new JwtBearerEvents
+                    {
+                        OnMessageReceived = context =>
+                        {
+                            var token = context.Request.Cookies["JWT"];
+                            context.Token = token;
+                            return Task.CompletedTask;
+                        }
                     };
                 });
 
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("RequireAdm", policy =>
+                {
+                    policy.AuthenticationSchemes.Add(JwtBearerDefaults.AuthenticationScheme);
+                    policy.RequireRole("Administrador");
+                });
+
+                options.AddPolicy("RequireMod", policy =>
+                {
+                    policy.AuthenticationSchemes.Add(JwtBearerDefaults.AuthenticationScheme);
+                    policy.RequireRole("Moderador");
+                });
+            });
 
             services.AddScoped(typeof(IRepositorioBase<>), typeof(RepositorioBase<>));
             services.AddScoped<ICartRepositorio, CartRepositorio>();

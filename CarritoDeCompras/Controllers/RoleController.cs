@@ -8,7 +8,7 @@ namespace CarritoDeCompras.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
+    [Authorize(Policy = "RequireAdm")]
     public class RoleController : ControllerBase
     {
         private readonly RoleManager<IdentityRole> _roleManager;
