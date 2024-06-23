@@ -25,6 +25,7 @@ namespace CarritoDeCompras.Controllers
         }
 
         [HttpGet("GetAll")]
+
         public async Task<ActionResult<IEnumerable<CategoriaDTO>>> Get()
         {
             ApiResponse<IEnumerable<CategoriaDTO>> response;
@@ -51,6 +52,7 @@ namespace CarritoDeCompras.Controllers
         }
 
         [HttpGet("GetOne")]
+        
         public async Task<ActionResult<CategoriaDTO>> Get(Guid id)
         {
             ApiResponse<CategoriaDTO> response;
@@ -87,7 +89,7 @@ namespace CarritoDeCompras.Controllers
         }
 
         [HttpPost("Create")]
-        [Authorize(Policy = "RequireAdm")]
+        [Authorize(Roles = "Administrador, Moderador")]
         public async Task<IActionResult> Post([FromBody] CategoriaDTO categoria)
         {
             ApiResponse<CategoriaDTO> response;
@@ -136,7 +138,7 @@ namespace CarritoDeCompras.Controllers
         }
 
         [HttpPut("Editar")]
-        [Authorize(Policy = "RequireAdm")]
+        [Authorize(Roles = "Administrador, Moderador")]
         public async Task<IActionResult> Put(Guid id, [FromBody] CategoriaDTI categoriaDTI)
         {
             ApiResponse<CategoriaDTO> response;
@@ -188,7 +190,7 @@ namespace CarritoDeCompras.Controllers
         }
 
         [HttpDelete("Eliminar")]
-        [Authorize(Policy = "RequireAdm")]
+        [Authorize(Roles = "Administrador")]
         public async Task<IActionResult> Delete(Guid id)
         {
             ApiResponse<CategoriaDTO> response;

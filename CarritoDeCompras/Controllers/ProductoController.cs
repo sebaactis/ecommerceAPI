@@ -81,7 +81,7 @@ namespace CarritoDeCompras.Controllers
         }
 
         [HttpPost("Crear")]
-        [Authorize(Policy = "RequireAdm")]
+        [Authorize(Roles = "Administrador, Moderador")]
         public async Task<IActionResult> Post([FromBody] ProductoDTI producto)
         {
 
@@ -125,7 +125,7 @@ namespace CarritoDeCompras.Controllers
         }
 
         [HttpPut("Editar")]
-        [Authorize(Policy = "RequireAdm")]
+        [Authorize(Roles = "Administrador, Moderador")]
         public async Task<ActionResult<ProductoDTI>> Put(Guid id, [FromBody] ProductoDTI productoDTI)
         {
             ApiResponse<ProductoDTI> response;
@@ -177,7 +177,7 @@ namespace CarritoDeCompras.Controllers
         }
 
         [HttpDelete("Eliminar")]
-        [Authorize(Policy = "RequireAdm")]
+        [Authorize(Roles = "Administrador")]
         public async Task<IActionResult> Delete(Guid id)
         {
             ApiResponse<ProductoDTI> response;

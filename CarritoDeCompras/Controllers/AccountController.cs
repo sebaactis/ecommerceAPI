@@ -54,7 +54,7 @@ namespace CarritoDeCompras.Controllers
                 {
                     var role = await _roleManager.FindByNameAsync("Usuario");
 
-                    if(role != null)
+                    if (role != null)
                     {
                         var roleAssing = await _userManager.AddToRoleAsync(user, "Usuario");
 
@@ -97,26 +97,18 @@ namespace CarritoDeCompras.Controllers
                     var userRole = await _userManager.GetRolesAsync(user);
                     var token = GenerateJwtToken(user.UserName, user.Id, userRole.FirstOrDefault());
 
-                    var cookieClaims = new List<Claim>
-                       {
-                         new Claim("JWT", token)
-                       };
-
-                    var claimsIdentity = new ClaimsIdentity(cookieClaims, CookieAuthenticationDefaults.AuthenticationScheme);
-
-                    await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity));
-
-                    Response.Cookies.Append("JWT", token, new CookieOptions
+                    var cookieOptions = new CookieOptions
                     {
                         HttpOnly = true,
                         Secure = true,
                         SameSite = SameSiteMode.Strict,
                         Expires = DateTime.UtcNow.AddMinutes(15)
-                    });
+                    };
+                    Response.Cookies.Append("JWT", token, cookieOptions);
 
                     response = ApiResponse<string>.SuccessResponse("Logueado correctamente!", 200);
-
                     return Ok(response);
+
                 }
 
                 response = ApiResponse<string>.ErrorResponse(400, "Error al intentar loguearse");

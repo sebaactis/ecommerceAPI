@@ -8,7 +8,7 @@ namespace CarritoDeCompras.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(Policy = "RequireAdm")]
+    [Authorize(Roles = "Administrador")]
     public class RoleController : ControllerBase
     {
         private readonly RoleManager<IdentityRole> _roleManager;
@@ -224,9 +224,6 @@ namespace CarritoDeCompras.Controllers
                 response = ApiResponse<IdentityRole>.ErrorResponse(500, ex.Message);
                 return BadRequest(response);
             }
-
-            
-
         }
     }
 }
