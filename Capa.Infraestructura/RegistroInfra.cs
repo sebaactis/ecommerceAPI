@@ -7,6 +7,7 @@ using Capa.Infraestructura.Persistencia;
 using Capa.Infraestructura.Repositorio.Implementacion;
 using Capa.Infraestructura.Repositorio.Interfaces;
 using Capa.Infraestructura.Servicios.Implementacion;
+using Capa.Infraestructura.Servicios.Utilidades;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Http;
@@ -61,9 +62,41 @@ namespace Capa.Infraestructura
                     {
                         OnMessageReceived = context =>
                         {
-                            var token = context.Request.Cookies["JWT"];
-                            context.Token = token;
-                            return Task.CompletedTask;
+                            var tokenUtility = new TokenUtilities(configuration);
+                            var accessToken = context.Request.Cookies["accessToken"];
+
+                            if (context.Request.Path == "/api/Account/Login")
+                            {
+                                return Task.CompletedTask;
+                            }
+
+                            if (!string.IsNullOrEmpty(accessToken) && context.Request.Path != "/api/Account/Login")
+                            {
+                                var principal = tokenUtility.ValidateToken(accessToken);
+
+                                if (principal != null)
+                                {
+                                    context.Token = accessToken;
+                                    return Task.CompletedTask;
+                                }
+                            }
+
+                            var refreshToken = context.Request.Cookies["refreshToken"];
+
+                            if (!string.IsNullOrEmpty(refreshToken) && context.Request.Path != "/api/Account/Login")
+                            {
+                                var newAccessToken = tokenUtility.RefreshToken(context.HttpContext);
+
+                                if (newAccessToken != null)
+                                {
+                                    context.Token = newAccessToken;
+                                    return Task.CompletedTask;
+                                }
+                            }
+
+                            context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+                            context.Response.ContentType = "application/json";
+                            return context.Response.WriteAsync("{\"error\": \"No autorizado. Debe autenticarse para acceder a este recurso.\"}");
                         },
                         OnAuthenticationFailed = context =>
                         {
@@ -85,7 +118,6 @@ namespace Capa.Infraestructura
                             context.Response.ContentType = "application/json";
                             return context.Response.WriteAsync("{\"error\": \"Prohibido. No tiene permiso para acceder a este recurso.\"}");
                         }
-
                     };
                 });
 

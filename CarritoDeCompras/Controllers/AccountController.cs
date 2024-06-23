@@ -1,5 +1,6 @@
 ﻿using Capa.Datos.Entidades;
 using Capa.Datos.Modelos;
+using Capa.Infraestructura.Servicios.Utilidades;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
@@ -20,12 +21,14 @@ namespace CarritoDeCompras.Controllers
         private readonly UserManager<User> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly IConfiguration _configuration;
+        private readonly TokenUtilities tokenUtility;
 
         public AccountController(UserManager<User> userManager, RoleManager<IdentityRole> roleManager, IConfiguration configuration)
         {
             _userManager = userManager;
             _configuration = configuration;
             _roleManager = roleManager;
+            tokenUtility = new TokenUtilities(_configuration);
         }
 
         [HttpPost]
@@ -95,20 +98,30 @@ namespace CarritoDeCompras.Controllers
                 if (user != null && await _userManager.CheckPasswordAsync(user, model.Password))
                 {
                     var userRole = await _userManager.GetRolesAsync(user);
-                    var token = GenerateJwtToken(user.UserName, user.Id, userRole.FirstOrDefault());
+                    var accessToken = tokenUtility.GenerateJwtToken(user.UserName, user.Id, userRole.FirstOrDefault(), 1);
+                    var refreshToken = tokenUtility.GenerateJwtToken(user.UserName, user.Id, userRole.FirstOrDefault(), 1);
 
-                    var cookieOptions = new CookieOptions
+                    var accessTokenCookieOptions = new CookieOptions
                     {
                         HttpOnly = true,
                         Secure = true,
                         SameSite = SameSiteMode.Strict,
                         Expires = DateTime.UtcNow.AddMinutes(15)
                     };
-                    Response.Cookies.Append("JWT", token, cookieOptions);
+                    Response.Cookies.Append("accessToken", accessToken, accessTokenCookieOptions);
+
+                    var refreshTokenCookieOptions = new CookieOptions
+                    {
+                        HttpOnly = true,
+                        Secure = true,
+                        SameSite = SameSiteMode.Strict,
+                        Expires = DateTime.UtcNow.AddDays(7)
+                    };
+
+                    Response.Cookies.Append("refreshToken", refreshToken, refreshTokenCookieOptions);
 
                     response = ApiResponse<string>.SuccessResponse("Logueado correctamente!", 200);
                     return Ok(response);
-
                 }
 
                 response = ApiResponse<string>.ErrorResponse(400, "Error al intentar loguearse");
@@ -148,28 +161,17 @@ namespace CarritoDeCompras.Controllers
             }
         }
 
-        private string GenerateJwtToken(string username, string id, string userRole)
+        [HttpPost("RefreshToken")]
+        public IActionResult RefreshToken()
         {
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
-            var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
+            var newAccessToken = tokenUtility.RefreshToken(HttpContext);
 
-            var claims = new[]
+            if (newAccessToken == null)
             {
-                new Claim("Username", username),
-                new Claim("UserId", id),
-                new Claim(ClaimTypes.Role, userRole)
-            };
+                return Unauthorized(ApiResponse<string>.ErrorResponse(401, "Invalid refresh token"));
+            }
 
-            var token = new JwtSecurityToken(
-                issuer: _configuration["Jwt:Issuer"],
-                audience: _configuration["Jwt:Audience"],
-                claims: claims,
-                expires: DateTime.Now.AddMinutes(15),
-                signingCredentials: credentials
-                );
-
-            return tokenHandler.WriteToken(token);
+            return Ok(ApiResponse<string>.SuccessResponse("Token refreshed successfully", 200));
         }
     }
 }

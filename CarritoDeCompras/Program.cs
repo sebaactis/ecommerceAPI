@@ -1,5 +1,7 @@
+using Capa.Aplicacion.Servicios.Interfaces;
 using Capa.Infraestructura;
-
+using Microsoft.AspNetCore.Localization;
+using System.Globalization;
 
 var builder = WebApplication.CreateBuilder(args);
 

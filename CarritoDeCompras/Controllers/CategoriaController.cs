@@ -25,7 +25,6 @@ namespace CarritoDeCompras.Controllers
         }
 
         [HttpGet("GetAll")]
-
         public async Task<ActionResult<IEnumerable<CategoriaDTO>>> Get()
         {
             ApiResponse<IEnumerable<CategoriaDTO>> response;

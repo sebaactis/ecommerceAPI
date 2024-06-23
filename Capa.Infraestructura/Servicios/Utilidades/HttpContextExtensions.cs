@@ -7,7 +7,7 @@ namespace Capa.Infraestructura.Servicios.Utilidades
         {
             public static string GetJwtToken(this HttpContext context)
             {
-                var jwtFromCookie  = context.Request.Cookies.TryGetValue("JWT", out string token);
+                var jwtFromCookie  = context.Request.Cookies.TryGetValue("accessToken", out string token);
 
                 if(!jwtFromCookie) return null;
 
