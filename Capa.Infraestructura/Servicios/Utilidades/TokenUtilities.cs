@@ -96,14 +96,14 @@ namespace Capa.Infraestructura.Servicios.Utilidades
                 return null;
             }
 
-            var newAccessToken = GenerateJwtToken(username, userId, userRole, 15);
+            var newAccessToken = GenerateJwtToken(username, userId, userRole, 20);
 
             var cookieOptions = new CookieOptions
             {
                 HttpOnly = true,
                 Secure = true,
                 SameSite = SameSiteMode.Strict,
-                Expires = DateTime.UtcNow.AddMinutes(15)
+                Expires = DateTime.UtcNow.AddMinutes(20)
             };
             context.Response.Cookies.Append("accessToken", newAccessToken, cookieOptions);
 

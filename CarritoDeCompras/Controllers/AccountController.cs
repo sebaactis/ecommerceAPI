@@ -66,16 +66,16 @@ namespace CarritoDeCompras.Controllers
                             response = ApiResponse<string>.SuccessResponse("Registrado correctamente!", 200);
                             return Ok(response);
                         }
-
-                        response = ApiResponse<string>.ErrorResponse(400, "Ocurrio un error al intentar asignar el rol por defecto");
-                        return BadRequest(response);
                     }
-
-                    response = ApiResponse<string>.ErrorResponse(400, "Ocurrio un error al intentar registrarse");
-                    return BadRequest(response);
+                    else
+                    {
+                        var userDelete = await _userManager.DeleteAsync(user);
+                        response = ApiResponse<string>.ErrorResponse(404, "No existe el rol solicitado");
+                        return NotFound(response);
+                    }
                 }
 
-                response = ApiResponse<string>.ErrorResponse(400, "Ocurrio un error al intentar registrarse");
+                response = ApiResponse<string>.ErrorResponse(400, result.Errors.FirstOrDefault().Description);
                 return BadRequest(response);
             }
             catch (Exception ex)
@@ -98,15 +98,15 @@ namespace CarritoDeCompras.Controllers
                 if (user != null && await _userManager.CheckPasswordAsync(user, model.Password))
                 {
                     var userRole = await _userManager.GetRolesAsync(user);
-                    var accessToken = tokenUtility.GenerateJwtToken(user.UserName, user.Id, userRole.FirstOrDefault(), 1);
-                    var refreshToken = tokenUtility.GenerateJwtToken(user.UserName, user.Id, userRole.FirstOrDefault(), 1);
+                    var accessToken = tokenUtility.GenerateJwtToken(user.UserName, user.Id, userRole.FirstOrDefault(), 20);
+                    var refreshToken = tokenUtility.GenerateJwtToken(user.UserName, user.Id, userRole.FirstOrDefault(), (7 * 24 * 60));
 
                     var accessTokenCookieOptions = new CookieOptions
                     {
                         HttpOnly = true,
                         Secure = true,
                         SameSite = SameSiteMode.Strict,
-                        Expires = DateTime.UtcNow.AddMinutes(15)
+                        Expires = DateTime.UtcNow.AddMinutes(20)
                     };
                     Response.Cookies.Append("accessToken", accessToken, accessTokenCookieOptions);
 
