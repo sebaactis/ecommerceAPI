@@ -12,6 +12,9 @@ FROM mcr.microsoft.com/dotnet/sdk:8.0-nanoserver-1809 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 COPY ["CarritoDeCompras/CarritoDeCompras.csproj", "CarritoDeCompras/"]
+COPY ["Capa.Infraestructura/Capa.Infraestructura.csproj", "Capa.Infraestructura/"]
+COPY ["Capa.Aplicacion/Capa.Aplicacion.csproj", "Capa.Aplicacion/"]
+COPY ["Capa.Datos/Capa.Datos.csproj", "Capa.Datos/"]
 RUN dotnet restore "./CarritoDeCompras/CarritoDeCompras.csproj"
 COPY . .
 WORKDIR "/src/CarritoDeCompras"
