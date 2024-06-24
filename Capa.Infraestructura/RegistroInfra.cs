@@ -93,10 +93,7 @@ namespace Capa.Infraestructura
                                     return Task.CompletedTask;
                                 }
                             }
-
-                            context.Response.StatusCode = StatusCodes.Status401Unauthorized;
-                            context.Response.ContentType = "application/json";
-                            return context.Response.WriteAsync("{\"error\": \"No autorizado. Debe autenticarse para acceder a este recurso.\"}");
+                            return Task.CompletedTask;
                         },
                         OnAuthenticationFailed = context =>
                         {
