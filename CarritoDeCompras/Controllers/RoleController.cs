@@ -73,7 +73,7 @@ namespace CarritoDeCompras.Controllers
             {
                 if (string.IsNullOrEmpty(roleModel.Name) && string.IsNullOrWhiteSpace(roleModel.Name))
                 {
-                    response = ApiResponse<IdentityRole>.ErrorResponse(400, "El rol no puede estar vacio o tener espacios");
+                    response = ApiResponse<IdentityRole>.ErrorResponse(400, "El rol no puede estar vacio");
                     return BadRequest(response);
                 }
 

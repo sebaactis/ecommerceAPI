@@ -1,16 +1,9 @@
 ﻿using Capa.Datos.Entidades;
 using Capa.Datos.Modelos;
 using Capa.Infraestructura.Servicios.Utilidades;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.IdentityModel.Tokens;
-using System.IdentityModel.Tokens.Jwt;
-using System.Net;
-using System.Security.Claims;
-using System.Text;
 
 namespace CarritoDeCompras.Controllers
 {
@@ -162,6 +155,7 @@ namespace CarritoDeCompras.Controllers
         }
 
         [HttpPost("RefreshToken")]
+        [Authorize]
         public IActionResult RefreshToken()
         {
             var newAccessToken = tokenUtility.RefreshToken(HttpContext);

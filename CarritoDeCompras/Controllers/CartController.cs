@@ -66,12 +66,12 @@ namespace CarritoDeCompras.Controllers
 
             try
             {
-                var userId = HttpContext.GetUserIdFromToken();
+                var userId = UserValidation.userValidationId(HttpContext);
 
-                if (userId == null)
+                if(userId == null)
                 {
                     response = ApiResponse<CartCreateDTO>.ErrorResponse(404, "Usuario no encontrado");
-                    return NotFound(response);
+                   return NotFound(response);
                 }
 
                 var cart = new Cart();
@@ -99,7 +99,7 @@ namespace CarritoDeCompras.Controllers
 
             try
             {
-                var userId = HttpContext.GetUserIdFromToken();
+                var userId = UserValidation.userValidationId(HttpContext);
 
                 if (userId == null)
                 {
@@ -145,7 +145,7 @@ namespace CarritoDeCompras.Controllers
 
             try
             {
-                var userId = HttpContext.GetUserIdFromToken();
+                var userId = UserValidation.userValidationId(HttpContext);
 
                 if (userId == null)
                 {
@@ -172,7 +172,7 @@ namespace CarritoDeCompras.Controllers
 
             try
             {
-                var userId = HttpContext.GetUserIdFromToken();
+                var userId = UserValidation.userValidationId(HttpContext);
 
                 if (userId == null)
                 {

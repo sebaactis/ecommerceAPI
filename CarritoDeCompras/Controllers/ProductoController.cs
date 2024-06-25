@@ -4,7 +4,6 @@ using Capa.Aplicacion.DTO;
 using Capa.Aplicacion.Servicios.Interfaces;
 using Capa.Datos.Entidades;
 using Capa.Datos.Modelos;
-using Capa.Infraestructura.Servicios.Utilidades;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -59,7 +58,6 @@ namespace CarritoDeCompras.Controllers
 
             try
             {
-
                 var product = await _productService.GetOne(id, "ProductoId", p => p.Categoria);
 
                 if (product != null)
@@ -88,14 +86,6 @@ namespace CarritoDeCompras.Controllers
             ApiResponse<ProductoDTI> response;
             try
             {
-                var user = HttpContext.GetUserIdFromToken();
-
-                if (user == null)
-                {
-                    response = ApiResponse<ProductoDTI>.ErrorResponse(401, "Usuario no autenticado");
-                    return Unauthorized(response);
-                }
-
                 if (!ModelState.IsValid)
                 {
                     var error = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).FirstOrDefault();
@@ -131,14 +121,6 @@ namespace CarritoDeCompras.Controllers
             ApiResponse<ProductoDTI> response;
             try
             {
-                var user = HttpContext.GetUserIdFromToken();
-
-                if (user == null)
-                {
-                    response = ApiResponse<ProductoDTI>.ErrorResponse(401, "Usuario no autenticado");
-                    return Unauthorized(response);
-                }
-
                 if (!ModelState.IsValid)
                 {
                     var error = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).FirstOrDefault();
@@ -184,14 +166,6 @@ namespace CarritoDeCompras.Controllers
 
             try
             {
-                var user = HttpContext.GetUserIdFromToken();
-
-                if (user == null)
-                {
-                    response = ApiResponse<ProductoDTI>.ErrorResponse(401, "Usuario no autenticado");
-                    return Unauthorized(response);
-                }
-
                 var productoFind = await _productService.GetOne(id, "ProductoId");
 
                 if (productoFind == null)

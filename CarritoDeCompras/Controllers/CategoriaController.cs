@@ -30,14 +30,6 @@ namespace CarritoDeCompras.Controllers
             ApiResponse<IEnumerable<CategoriaDTO>> response;
             try
             {
-                var userId = HttpContext.GetUserIdFromToken();
-
-                if (userId == null)
-                {
-                    response = ApiResponse<IEnumerable<CategoriaDTO>>.ErrorResponse(401, "Usuario no autenticado");
-                    return Unauthorized(response);
-                }
-
                 var categorias = await _categoriaService.Get();
                 var categoriasDto = _mapper.Map<IEnumerable<CategoriaDTO>>(categorias);
                 response = ApiResponse<IEnumerable<CategoriaDTO>>.SuccessResponse(categoriasDto, 200);
@@ -52,20 +44,12 @@ namespace CarritoDeCompras.Controllers
 
         [HttpGet("GetOne")]
         
-        public async Task<ActionResult<CategoriaDTO>> Get(Guid id)
+        public async Task<ActionResult<CategoriaDTO>> GetOne(Guid id)
         {
             ApiResponse<CategoriaDTO> response;
 
             try
             {
-                var userId = HttpContext.GetUserIdFromToken();
-
-                if (userId == null)
-                {
-                    response = ApiResponse<CategoriaDTO>.ErrorResponse(401, "Usuario no autenticado");
-                    return Unauthorized(response);
-                }
-
                 var categoria = await _categoriaService.GetOne(id, "CategoriaId");
 
                 if (categoria == null)
@@ -95,14 +79,6 @@ namespace CarritoDeCompras.Controllers
 
             try
             {
-                var userId = HttpContext.GetUserIdFromToken();
-
-                if (userId == null)
-                {
-                    response = ApiResponse<CategoriaDTO>.ErrorResponse(401, "Usuario no autenticado");
-                    return Unauthorized(response);
-                }
-
                 if (!ModelState.IsValid)
                 {
                     var error = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).FirstOrDefault();
@@ -144,14 +120,6 @@ namespace CarritoDeCompras.Controllers
 
             try
             {
-                var userId = HttpContext.GetUserIdFromToken();
-
-                if (userId == null)
-                {
-                    response = ApiResponse<CategoriaDTO>.ErrorResponse(401, "Usuario no autenticado");
-                    return Unauthorized(response);
-                }
-
                 if (!ModelState.IsValid)
                 {
                     var error = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).FirstOrDefault();
@@ -196,14 +164,6 @@ namespace CarritoDeCompras.Controllers
 
             try
             {
-                var userId = HttpContext.GetUserIdFromToken();
-
-                if (userId == null)
-                {
-                    response = ApiResponse<CategoriaDTO>.ErrorResponse(401, "Usuario no autenticado");
-                    return Unauthorized(response);
-                }
-
                 var categoriaFind = await _categoriaService.GetOne(id, "CategoriaId");
 
                 if (categoriaFind == null)

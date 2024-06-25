@@ -28,12 +28,12 @@ namespace CarritoDeCompras.Controllers
             ApiResponse<OrdenDTO> response;
             try
             {
-                var user = HttpContext.GetUserIdFromToken();
+                var user = UserValidation.userValidationId(HttpContext);
 
                 if (user == null)
                 {
-                    response = ApiResponse<OrdenDTO>.ErrorResponse(401, "Usuario no autenticado");
-                    return Unauthorized(response);
+                    response = ApiResponse<OrdenDTO>.ErrorResponse(404, "Usuario no encontrado");
+                    return NotFound(response);
                 }
 
                 var result = _mapper.Map<OrdenDTO>(await _ordenService.Create(user));
@@ -55,14 +55,6 @@ namespace CarritoDeCompras.Controllers
 
             try
             {
-                var user = HttpContext.GetUserIdFromToken();
-
-                if (user == null)
-                {
-                    response = ApiResponse<OrdenDTO>.ErrorResponse(401, "Usuario no autenticado");
-                    return Unauthorized(response);
-                }
-
                 var orden = await _ordenService.Get(ordenId);
 
                 if (orden == null)
@@ -92,12 +84,12 @@ namespace CarritoDeCompras.Controllers
 
             try
             {
-                var user = HttpContext.GetUserIdFromToken();
+                var user = UserValidation.userValidationId(HttpContext);
 
                 if (user == null)
                 {
-                    response = ApiResponse<IEnumerable<OrdenDTO>>.ErrorResponse(401, "Usuario no autenticado");
-                    return Unauthorized(response);
+                    response = ApiResponse<IEnumerable<OrdenDTO>>.ErrorResponse(404, "Usuario no encontrado");
+                    return NotFound(response);
                 }
 
                 var result = await _ordenService.GetAllById(user);

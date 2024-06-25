@@ -8,7 +8,6 @@ using Capa.Infraestructura.Repositorio.Implementacion;
 using Capa.Infraestructura.Repositorio.Interfaces;
 using Capa.Infraestructura.Servicios.Implementacion;
 using Capa.Infraestructura.Servicios.Utilidades;
-using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -17,7 +16,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
-
 
 namespace Capa.Infraestructura
 {
