@@ -3,13 +3,15 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.9.34728.123
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CarritoDeCompras", "CarritoDeCompras\CarritoDeCompras.csproj", "{383DBD18-53D4-439D-8961-2D0B7E60E286}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CarritoDeCompras", "CarritoDeCompras\CarritoDeCompras.csproj", "{383DBD18-53D4-439D-8961-2D0B7E60E286}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Capa.Datos", "Capa.Datos\Capa.Datos.csproj", "{647613E9-BE23-4F2A-989A-CAD50612AE0E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Capa.Datos", "Capa.Datos\Capa.Datos.csproj", "{647613E9-BE23-4F2A-989A-CAD50612AE0E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Capa.Aplicacion", "Capa.Aplicacion\Capa.Aplicacion.csproj", "{8C9807B7-37B5-4B9C-8883-3037E0DE4B3B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Capa.Aplicacion", "Capa.Aplicacion\Capa.Aplicacion.csproj", "{8C9807B7-37B5-4B9C-8883-3037E0DE4B3B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Capa.Infraestructura", "Capa.Infraestructura\Capa.Infraestructura.csproj", "{9408B8DF-9503-4E94-8631-D7AA2D7CBA7C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Capa.Infraestructura", "Capa.Infraestructura\Capa.Infraestructura.csproj", "{9408B8DF-9503-4E94-8631-D7AA2D7CBA7C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestCarritoDeCompras", "TestCarritoDeCompras\TestCarritoDeCompras.csproj", "{BBF578DE-FB93-46A2-9CDE-D995B1685907}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +35,10 @@ Global
 		{9408B8DF-9503-4E94-8631-D7AA2D7CBA7C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9408B8DF-9503-4E94-8631-D7AA2D7CBA7C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9408B8DF-9503-4E94-8631-D7AA2D7CBA7C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BBF578DE-FB93-46A2-9CDE-D995B1685907}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BBF578DE-FB93-46A2-9CDE-D995B1685907}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BBF578DE-FB93-46A2-9CDE-D995B1685907}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BBF578DE-FB93-46A2-9CDE-D995B1685907}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
