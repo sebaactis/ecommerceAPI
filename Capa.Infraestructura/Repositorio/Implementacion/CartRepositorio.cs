@@ -1,5 +1,4 @@
-﻿
-using Capa.Aplicacion.Repositorios.Interfaces;
+﻿using Capa.Aplicacion.Repositorios.Interfaces;
 using Capa.Datos.Entidades;
 using Capa.Infraestructura.Persistencia;
 using Microsoft.EntityFrameworkCore;

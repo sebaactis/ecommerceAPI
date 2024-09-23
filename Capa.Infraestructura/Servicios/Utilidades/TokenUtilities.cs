@@ -31,7 +31,7 @@ namespace Capa.Infraestructura.Servicios.Utilidades
             var token = new JwtSecurityToken(
                 issuer: _configuration["Jwt:Issuer"],
                 audience: _configuration["Jwt:Audience"],
-                claims: claims,
+                claims,
                 expires: DateTime.UtcNow.AddMinutes(minutes),
                 signingCredentials: credentials
                 );

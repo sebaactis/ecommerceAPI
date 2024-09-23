@@ -99,13 +99,12 @@ namespace Capa.Infraestructura
                             context.Response.StatusCode = StatusCodes.Status401Unauthorized;
                             context.Response.ContentType = "text/plain";
                             return context.Response.WriteAsync("Token no válido.");
+                            
                         },
                         OnChallenge = context =>
                         {
                             context.HandleResponse();
-                            context.Response.StatusCode = StatusCodes.Status401Unauthorized;
-                            context.Response.ContentType = "application/json";
-                            return context.Response.WriteAsync("{\"error\": \"No autorizado. Debe autenticarse para acceder a este recurso.\"}");
+                            return context.Response.WriteAsync(" No autorizado. Debe autenticarse para acceder a este recurso.");
                         },
                         OnForbidden = context =>
                         {
@@ -117,13 +116,15 @@ namespace Capa.Infraestructura
                 });
 
             services.AddScoped(typeof(IRepositorioBase<>), typeof(RepositorioBase<>));
-            services.AddScoped<ICartRepositorio, CartRepositorio>();
+            services.AddScoped<CartRepositorio>();
+            services.AddScoped<ICartRepositorio, CachedCartRepositorio>();
             services.AddScoped<IProductService, ProductService>();
             services.AddScoped<ICategoriaService, CategoriaService>();
             services.AddScoped<ICartService, CartService>();
             services.AddScoped<IOrdenRepositorio, OrdenRepositorio>();
             services.AddScoped<IOrdenService, OrdenService>();
 
+            services.AddMemoryCache();
             services.AddAutoMapper(typeof(MappingProfile));
 
             return services;

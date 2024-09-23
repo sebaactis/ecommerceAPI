@@ -49,22 +49,12 @@ namespace CarritoDeCompras.Controllers
                 if (result.Succeeded)
                 {
                     var role = await _roleManager.FindByNameAsync("Usuario");
+                    var roleAssing = await _userManager.AddToRoleAsync(user, "Usuario");
 
-                    if (role != null)
+                    if (roleAssing.Succeeded)
                     {
-                        var roleAssing = await _userManager.AddToRoleAsync(user, "Usuario");
-
-                        if (roleAssing.Succeeded)
-                        {
-                            response = ApiResponse<string>.SuccessResponse("Registrado correctamente!", 200);
-                            return Ok(response);
-                        }
-                    }
-                    else
-                    {
-                        var userDelete = await _userManager.DeleteAsync(user);
-                        response = ApiResponse<string>.ErrorResponse(404, "No existe el rol solicitado");
-                        return NotFound(response);
+                        response = ApiResponse<string>.SuccessResponse("Registrado correctamente!", 200);
+                        return Ok(response);
                     }
                 }
 
