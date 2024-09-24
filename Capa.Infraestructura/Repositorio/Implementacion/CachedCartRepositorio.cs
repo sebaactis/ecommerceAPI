@@ -1,6 +1,7 @@
 ﻿using Capa.Aplicacion.Repositorios.Interfaces;
 using Capa.Datos.Entidades;
-using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Caching.Distributed;
+using Newtonsoft.Json;
 
 namespace Capa.Infraestructura.Repositorio.Implementacion
 {
@@ -8,12 +9,12 @@ namespace Capa.Infraestructura.Repositorio.Implementacion
     {
 
         private readonly CartRepositorio _decorator;
-        private readonly IMemoryCache _memoryCache;
+        private readonly IDistributedCache _distributedCache;
 
-        public CachedCartRepositorio(CartRepositorio decorator, IMemoryCache memoryCache)
+        public CachedCartRepositorio(CartRepositorio decorator, IDistributedCache distributedCache)
         {
             _decorator = decorator;
-            _memoryCache = memoryCache;
+            _distributedCache = distributedCache;
         }
 
         public Task AddProduct(CartItem cartItem)
@@ -26,18 +27,38 @@ namespace Capa.Infraestructura.Repositorio.Implementacion
             return _decorator.createCart(cart);
         }
 
-        public Task<Cart> GetCartById(string userId)
+        public async Task<Cart> GetCartById(string userId)
         {
             string key = $"cart-{userId}";
 
-            return _memoryCache.GetOrCreateAsync(
-                key,
-                entry =>
-                {
-                    entry.SetAbsoluteExpiration(TimeSpan.FromMinutes(1));
+            string? cachedCart = await _distributedCache.GetStringAsync(
+                key);
 
-                    return _decorator.GetCartById(userId);
+            Cart cart;
+            if (string.IsNullOrEmpty(cachedCart))
+            {
+                cart = await _decorator.GetCartById(userId);
+
+                if (cart is null)
+                {
+                    return cart;
+                }
+
+                await _distributedCache.SetStringAsync(key, JsonConvert.SerializeObject(cart, new JsonSerializerSettings
+                {
+                    ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+                }), new DistributedCacheEntryOptions
+                {
+                    AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(2)
                 });
+
+                return cart;
+            }
+
+            cart = JsonConvert.DeserializeObject<Cart>(cachedCart);
+
+            return cart;
+
         }
 
         public Task RemoveProduct(Guid cartId, CartItem cartItem)

@@ -14,6 +14,12 @@ builder.Services.AddEndpointsApiExplorer();
 
 builder.Services.AddRegistroInfra(builder.Configuration);
 
+builder.Services.AddStackExchangeRedisCache(redisOptions =>
+{
+    string connection = builder.Configuration.GetConnectionString("Redis");
+    redisOptions.Configuration = connection;
+});
+
 var app = builder.Build();
 
 //if (app.Environment.IsDevelopment())

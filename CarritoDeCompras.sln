@@ -11,7 +11,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Capa.Aplicacion", "Capa.Apl
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Capa.Infraestructura", "Capa.Infraestructura\Capa.Infraestructura.csproj", "{9408B8DF-9503-4E94-8631-D7AA2D7CBA7C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestCarritoDeCompras", "TestCarritoDeCompras\TestCarritoDeCompras.csproj", "{BBF578DE-FB93-46A2-9CDE-D995B1685907}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestCarritoDeCompras", "TestCarritoDeCompras\TestCarritoDeCompras.csproj", "{BBF578DE-FB93-46A2-9CDE-D995B1685907}"
+EndProject
+Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{B9E83E7D-85EB-4E5B-8106-B0243253ECCC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,6 +41,10 @@ Global
 		{BBF578DE-FB93-46A2-9CDE-D995B1685907}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BBF578DE-FB93-46A2-9CDE-D995B1685907}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BBF578DE-FB93-46A2-9CDE-D995B1685907}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B9E83E7D-85EB-4E5B-8106-B0243253ECCC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B9E83E7D-85EB-4E5B-8106-B0243253ECCC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B9E83E7D-85EB-4E5B-8106-B0243253ECCC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B9E83E7D-85EB-4E5B-8106-B0243253ECCC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

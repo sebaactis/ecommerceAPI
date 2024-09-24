@@ -115,9 +115,12 @@ namespace Capa.Infraestructura
                     };
                 });
 
-            services.AddScoped(typeof(IRepositorioBase<>), typeof(RepositorioBase<>));
+            services.AddScoped(typeof(RepositorioBase<>));
+            services.AddScoped(typeof(IRepositorioBase<>), typeof(CachedRepositorioBase<>));
+
             services.AddScoped<CartRepositorio>();
             services.AddScoped<ICartRepositorio, CachedCartRepositorio>();
+
             services.AddScoped<IProductService, ProductService>();
             services.AddScoped<ICategoriaService, CategoriaService>();
             services.AddScoped<ICartService, CartService>();
@@ -127,7 +130,15 @@ namespace Capa.Infraestructura
             services.AddMemoryCache();
             services.AddAutoMapper(typeof(MappingProfile));
 
-            return services;
+            var serviceProvider = services.BuildServiceProvider();
+
+            using (var scope = serviceProvider.CreateScope())
+            {
+                var context = scope.ServiceProvider.GetRequiredService<CarritoDbContext>();
+                context.Database.Migrate();
+            }
+
+                return services;
         }
 
     }

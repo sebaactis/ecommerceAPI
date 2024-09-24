@@ -1,0 +1,33 @@
+version: '3.4'
+
+services:
+  carritodecompras:
+    image: ${DOCKER_REGISTRY-}carritodecompras
+    build:
+      context: .
+      dockerfile: CarritoDeCompras/Dockerfile
+    ports:
+        - "8081:8081"
+  redis:
+    image: redis
+    ports:
+      - 6379:6379
+    volumes:
+      - redis:/data
+    depends_on:
+      - sqlserver
+
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: sqlserver
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=Carp1910@@@
+    ports:
+      - "1433:1433"
+    volumes:
+      - sqlserver_data:/var/opt/mssql
+
+volumes:
+  redis:
+  sqlserver_data:
